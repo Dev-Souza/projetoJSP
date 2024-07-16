@@ -48,10 +48,10 @@
 			<label class="form-label" for="login">Login: </label> 
 			<input name="login" id="login" type="text" class="form-control" required="required">
 			<div class="valid-feedback">
-      			OK
+      			OK!
     		</div>
     		<div class="invalid-feedback">
-      			Informe o login.
+      			Informe o login!
     		</div>
 		</div>
 
@@ -59,10 +59,10 @@
 			<label class="form-label" for="senha">Senha: </label> 
 			<input name="senha" type="password" class="form-control" id="senha" required="required">
 			<div class="valid-feedback">
-      			OK
+      			OK!
     		</div>
     		<div class="invalid-feedback">
-      			Informe a senha.
+      			Informe a senha!
     		</div>
 		</div>
 		
