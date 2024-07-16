@@ -29,7 +29,7 @@
 	
 	h6 {
 		position: absolute;
-		top: 65%;
+		top: 10%;
 		left: 33%;
 		right: 33%;
 		font-size: 15px;
@@ -44,7 +44,7 @@
 	<form action="ServletLoginn" method="post" class="row g-3 needs-validation" novalidate>
 		<input type="hidden" value="<%=request.getParameter("url")%>"
 			name="url">
-		<div class="col-md-6">
+		<div class="mb-3">
 			<label class="form-label" for="login">Login: </label> 
 			<input name="login" id="login" type="text" class="form-control" required="required">
 			<div class="valid-feedback">
@@ -55,7 +55,7 @@
     		</div>
 		</div>
 
-		<div class="col-md-6">
+		<div class="mb-3">
 			<label class="form-label" for="senha">Senha: </label> 
 			<input name="senha" type="password" class="form-control" id="senha" required="required">
 			<div class="valid-feedback">
