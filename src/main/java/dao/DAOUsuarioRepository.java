@@ -17,16 +17,31 @@ public class DAOUsuarioRepository {
 
 	public ModelLogin gravarUsuario(ModelLogin objeto) throws Exception {
 
-		String sql = "INSERT INTO model_login(login, senha, nome, email) VALUES (?, ?, ?, ?);";
-		PreparedStatement insertUsuario = connection.prepareStatement(sql);
+		if (objeto.isNovo()) {//Grava um novo
 
-		insertUsuario.setString(1, objeto.getLogin());
-		insertUsuario.setString(2, objeto.getSenha());
-		insertUsuario.setString(3, objeto.getNome());
-		insertUsuario.setString(4, objeto.getEmail());
-		insertUsuario.execute();// Executa a instrução SQL
-		connection.commit();
+			String sql = "INSERT INTO model_login(login, senha, nome, email) VALUES (?, ?, ?, ?);";
+			PreparedStatement insertUsuario = connection.prepareStatement(sql);
 
+			insertUsuario.setString(1, objeto.getLogin());
+			insertUsuario.setString(2, objeto.getSenha());
+			insertUsuario.setString(3, objeto.getNome());
+			insertUsuario.setString(4, objeto.getEmail());
+			insertUsuario.execute();// Executa a instrução SQL
+			connection.commit();
+		}else {
+			String sql = "UPDATE model_login SET login=?, senha=?, nome=?, email=? WHERE id = "+objeto.getId()+";";
+			
+			PreparedStatement updateUsuario = connection.prepareStatement(sql);
+			
+			updateUsuario.setString(1, objeto.getLogin());
+			updateUsuario.setString(2, objeto.getSenha());
+			updateUsuario.setString(3, objeto.getNome());
+			updateUsuario.setString(4, objeto.getEmail());
+			
+			updateUsuario.executeUpdate();
+			
+			connection.commit();
+		}
 		return this.consultarUsuario(objeto.getLogin());
 	}
 
@@ -52,16 +67,25 @@ public class DAOUsuarioRepository {
 	}
 
 	public boolean validarLogin(String login) throws Exception {
-		
+
 		String sql = "SELECT COUNT(1) > 0 AS existe FROM model_login WHERE upper(login) = upper(?)";
-		
 		PreparedStatement loginExistente = connection.prepareStatement(sql);
 		loginExistente.setString(1, login);
-		
+
 		ResultSet resultado = loginExistente.executeQuery();
-		
-		resultado.next();//Pra ele entrar nos resultados
+
+		resultado.next();// Pra ele entrar nos resultados
 		return resultado.getBoolean("existe");
+	}
+	
+	public void deletarUser(String idUser) throws Exception{
+		
+		String sql = "DELETE FROM public.model_login WHERE id = ?;";
+		PreparedStatement deletar = connection.prepareStatement(sql);
+		deletar.setLong(1, Long.parseLong(idUser));
+		deletar.executeUpdate(); //Executar nossa query
+		
+		connection.commit();
 	}
 
 }
