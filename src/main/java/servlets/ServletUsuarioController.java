@@ -28,12 +28,22 @@ public class ServletUsuarioController extends HttpServlet {
 			if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("deletar")) {
 
 				String idUser = request.getParameter("id");
-				//Operação para deletar usuário
+				// Operação para deletar usuário
 				daoUsuarioRepository.deletarUser(idUser);
-				
+
 				msg = "Excluido com sucesso!";
-				request.setAttribute("msg", "");
+				request.setAttribute("msg", msg);
 				request.getRequestDispatcher("principal/cadastroUsuario.jsp").forward(request, response);
+			} else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("deletarajax")) {
+
+				String idUser = request.getParameter("id");
+				// Operação para deletar usuário
+				daoUsuarioRepository.deletarUser(idUser);
+
+				msg = "Excluido com sucesso!";
+				response.getWriter().write(msg);
+			} else {
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
