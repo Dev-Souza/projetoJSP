@@ -132,7 +132,8 @@
 						<input type="text" class="form-control" placeholder="Nome"
 							aria-label="nome" id="nomeBusca" aria-describedby="basic-addon2">
 						<div class="input-group-append">
-							<button class="btn btn-primary" type="button" onclick="buscarUsuario();">Buscar</button>
+							<button class="btn btn-primary" type="button"
+								onclick="buscarUsuarioComAjax();">Buscar</button>
 						</div>
 					</div>
 				</div>
@@ -145,7 +146,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						
+
 					</tbody>
 				</table>
 				<div class="modal-footer">
@@ -157,15 +158,30 @@
 	</div>
 
 	<script type="text/javascript">
-	
-		function buscarUsuario() {
+		function buscarUsuarioComAjax() {
 			var nomeBusca = document.getElementById('nomeBusca').value;
+
+			if (nomeBusca != null && nomeBusca != '' && nomeBusca.trim() != '') { //Validando o que está vindo
+				
+				var urlAction = document.getElementById('formUser').action;
 			
-			if(nomeBusca != null && nomeBusca != '' && nomeBusca.trim() != ''){ //Validando o que está vindo
-				alert(nomeBusca);
+				$.ajax({
+
+					method : "get",
+					url : urlAction,
+					data : "nomeBusca=" + nomeBusca + "&acao=buscarajax",
+					success : function(response) {
+
+						//Retorno para o usuário
+						alert(response);
+					}
+
+				}).fail(function(xhr, status, errorThrown) {
+					alert('Erro ao buscar usuário por nome!' + xhr.responseText);
+				})
 			}
 		}
-	
+
 		function excluirUsuarioComAjax() {
 
 			if (confirm('Deseja realmente excluir?')) {
@@ -186,7 +202,7 @@
 
 				}).fail(function(xhr, status, errorThrown) {
 					alert('Erro ao deletar usuário!' + xhr.responseText);
-				})
+				});
 			}
 		}
 
