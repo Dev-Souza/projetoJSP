@@ -110,6 +110,31 @@ public class DAOUsuarioRepository {
 		
 		connection.commit();
 	}
+	
+public List<ModelLogin> buscarUsuarioAjax() throws Exception{
+		
+		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
+		
+		String sql = "SELECT * FROM model_login";
+		PreparedStatement busca = connection.prepareStatement(sql);
+		
+		//Armazena minha busca nesse resultado
+		ResultSet resultado = busca.executeQuery();
+		
+		while (resultado.next()) {//Percorre minhas linhas enquanto tem resultado detro delas
+			
+			ModelLogin modelLogin = new ModelLogin();
+			modelLogin.setEmail(resultado.getString("email"));
+			modelLogin.setId(resultado.getLong("id"));
+			modelLogin.setLogin(resultado.getString("login"));
+			modelLogin.setNome(resultado.getString("nome"));
+			//modelLogin.setSenha(resultado.getString("senha"));
+			
+			retorno.add(modelLogin);
+			
+		}
+		return retorno;
+	}
 
 	public List<ModelLogin> buscarUsuarioAjax(String nome) throws Exception{
 		

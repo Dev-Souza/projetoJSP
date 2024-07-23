@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-	
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,6 +103,22 @@
 											</div>
 										</div>
 										<span id="msg">${msg}</span>
+										<div style="height: 350px; overflow: scroll;">
+											<table class="table" id="tabelaResultadosView">
+												<thead>
+													<tr>
+														<th scope="col">ID</th>
+														<th scope="col">Nome</th>
+														<th scope="col">Ver</th>
+													</tr>
+												</thead>
+												<tbody>
+													<c:forEach items='${modelLogins}' var='ml'>
+														
+													</c:forEach>
+												</tbody>
+											</table>
+										</div>
 									</div>
 									<!-- Page-body end -->
 								</div>
@@ -150,13 +166,13 @@
 							</tr>
 						</thead>
 						<tbody>
-	
+
 						</tbody>
 					</table>
 				</div>
 				<span id="totalResultados" style="padding: 10px 0px 5px 5px"></span>
 				<div class="modal-footer">
-					
+
 					<button type="button" class="btn btn-secondary"
 						data-dismiss="modal">Fechar</button>
 				</div>
@@ -165,44 +181,59 @@
 	</div>
 
 	<script type="text/javascript">
-	
 		function visualizarEditar(id) {
-			
+
 			var urlAction = document.getElementById('formUser').action;
-			
+
 			window.location.href = urlAction + '?acao=buscarEditar&id=' + id
-			
+
 		}
-	
+
 		function buscarUsuarioComAjax() {
 			var nomeBusca = document.getElementById('nomeBusca').value;
 
 			if (nomeBusca != null && nomeBusca != '' && nomeBusca.trim() != '') { //Validando o que está vindo
-				
+
 				var urlAction = document.getElementById('formUser').action;
-			
-				$.ajax({
 
-					method : "get",
-					url : urlAction,
-					data : "nomeBusca=" + nomeBusca + "&acao=buscarajax",
-					success : function(response) {
-							
-						//Retorno para o usuário
-						var json = JSON.parse(response);
-						
-						$('#tabelaResultados > tbody > tr').remove();
-						
-						for (var i = 0; i < json.length; i++) {
-							$('#tabelaResultados > tbody').append('<tr> <td>' + json[i].id + '</td> <td>' + json[i].nome + '</td> <td><button type="button" class="btn btn-info" onclick="visualizarEditar('+json[i].id+')"> Visualizar </button></td> </tr>')
-						}
-						
-						document.getElementById('totalResultados').textContent = 'Resultados: ' + json.length
-					}
+				$
+						.ajax(
+								{
 
-				}).fail(function(xhr, status, errorThrown) {
-					alert('Erro ao buscar usuário por nome!' + xhr.responseText);
-				})
+									method : "get",
+									url : urlAction,
+									data : "nomeBusca=" + nomeBusca
+											+ "&acao=buscarajax",
+									success : function(response) {
+
+										//Retorno para o usuário
+										var json = JSON.parse(response);
+
+										$('#tabelaResultados > tbody > tr')
+												.remove();
+
+										for (var i = 0; i < json.length; i++) {
+											$('#tabelaResultados > tbody')
+													.append(
+															'<tr> <td>'
+																	+ json[i].id
+																	+ '</td> <td>'
+																	+ json[i].nome
+																	+ '</td> <td><button type="button" class="btn btn-info" onclick="visualizarEditar('
+																	+ json[i].id
+																	+ ')"> Visualizar </button></td> </tr>')
+										}
+
+										document
+												.getElementById('totalResultados').textContent = 'Resultados: '
+												+ json.length
+									}
+
+								}).fail(
+								function(xhr, status, errorThrown) {
+									alert('Erro ao buscar usuário por nome!'
+											+ xhr.responseText);
+								})
 			}
 		}
 
