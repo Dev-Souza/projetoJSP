@@ -36,9 +36,14 @@ public class ServletUsuarioController extends HttpServlet {
 				String idUser = request.getParameter("id");
 				// Operação para deletar usuário
 				daoUsuarioRepository.deletarUser(idUser);
+				
+				//Para recaregar todas as vezes meu usuário
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
 
 				msg = "Excluido com sucesso!";
 				request.setAttribute("msg", msg);
+				//Atributo do recarregamento
+				request.setAttribute("modelLogins", modelLogins);
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 			} else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("deletarajax")) {
 
@@ -65,10 +70,16 @@ public class ServletUsuarioController extends HttpServlet {
 				String idUser = request.getParameter("id");
 				
 				ModelLogin modelLogin = daoUsuarioRepository.buscarUsuarioPorId(idUser);
+				//Para recaregar todas as vezes meu usuário
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+				
 				
 				request.setAttribute("msg", "Usuário em edição");
 				request.setAttribute("modelLogin", modelLogin);
+				//Atributo do recarregamento
+				request.setAttribute("modelLogins", modelLogins);
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
+				
 			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("listarUser")) {
 				
 				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
@@ -118,9 +129,14 @@ public class ServletUsuarioController extends HttpServlet {
 				// Operação para gravar no banco
 				modelLogin = daoUsuarioRepository.gravarUsuario(modelLogin);
 			}
-
+			
+			//Para recarregar todas as vezes meus usuários
+			List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+			
 			request.setAttribute("msg", msg);
 			request.setAttribute("modelLogin", modelLogin);
+			//Atributo do recarregamento
+			request.setAttribute("modelLogins", modelLogins);
 			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 
 		} catch (Exception e) {

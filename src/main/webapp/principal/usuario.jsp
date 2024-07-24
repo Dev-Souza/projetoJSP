@@ -93,7 +93,7 @@
 																class="btn btn-success waves-effect waves-light">Salvar</button>
 															<button type="button"
 																class="btn btn-info waves-effect waves-light"
-																onclick="excluirUsuarioComAjax();">Excluir</button>
+																onclick="excluirUsuario();">Excluir</button>
 															<button type="button" class="btn btn-secundary"
 																data-toggle="modal" data-target="#exampleModalUsuario">
 																Pesquisar</button>
@@ -114,7 +114,11 @@
 												</thead>
 												<tbody>
 													<c:forEach items='${modelLogins}' var='ml'>
-														
+														<tr>
+															<td><c:out value="${ml.id}"></c:out></td>
+															<td><c:out value="${ml.nome}"></c:out></td>
+															<td><a class="btn btn-primary" href="<%= request.getContextPath() %>/ServletUsuarioController?acao=buscarEditar&id=${ml.id}" >Ver</a></td>
+														</tr>
 													</c:forEach>
 												</tbody>
 											</table>
