@@ -3,20 +3,18 @@ package servlets;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dao.DAOUsuarioRepository;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ModelLogin;
 
 @WebServlet(urlPatterns = {"/ServletUsuarioControlleer"})
-public class ServletUsuarioController extends HttpServlet {
+public class ServletUsuarioController extends ServletGenericUtil{
 	private static final long serialVersionUID = 1L;
 
 	private DAOUsuarioRepository daoUsuarioRepository = new DAOUsuarioRepository();
@@ -38,7 +36,7 @@ public class ServletUsuarioController extends HttpServlet {
 				daoUsuarioRepository.deletarUser(idUser);
 				
 				//Para recaregar todas as vezes meu usuário
-				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 
 				msg = "Excluido com sucesso!";
 				request.setAttribute("msg", msg);
@@ -57,7 +55,7 @@ public class ServletUsuarioController extends HttpServlet {
 			
 				String nomeBuscado = request.getParameter("nomeBusca");
 				
-				List<ModelLogin> dadosJsonUser = daoUsuarioRepository.buscarUsuarioAjax(nomeBuscado);
+				List<ModelLogin> dadosJsonUser = daoUsuarioRepository.buscarUsuarioAjax(nomeBuscado, super.getUserLogado(request));
 				
 				//Dependencia Jackson para transformar em json o meu objeto
 				ObjectMapper mapper = new ObjectMapper();
@@ -69,9 +67,9 @@ public class ServletUsuarioController extends HttpServlet {
 			
 				String idUser = request.getParameter("id");
 				
-				ModelLogin modelLogin = daoUsuarioRepository.buscarUsuarioPorId(idUser);
+				ModelLogin modelLogin = daoUsuarioRepository.buscarUsuarioPorId(idUser, super.getUserLogado(request));
 				//Para recaregar todas as vezes meu usuário
-				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 				
 				
 				request.setAttribute("msg", "Usuário em edição");
@@ -82,7 +80,7 @@ public class ServletUsuarioController extends HttpServlet {
 				
 			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("listarUser")) {
 				
-				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 				
 				request.setAttribute("msg", "Usuário carregados");
 				request.setAttribute("modelLogins", modelLogins);
@@ -127,11 +125,11 @@ public class ServletUsuarioController extends HttpServlet {
 					msg = "Atualizado com sucesso!";
 				}
 				// Operação para gravar no banco
-				modelLogin = daoUsuarioRepository.gravarUsuario(modelLogin);
+				modelLogin = daoUsuarioRepository.gravarUsuario(modelLogin, super.getUserLogado(request));
 			}
 			
 			//Para recarregar todas as vezes meus usuários
-			List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax();
+			List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 			
 			request.setAttribute("msg", msg);
 			request.setAttribute("modelLogin", modelLogin);

@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <nav class="pcoded-navbar">
 	<div class="sidebar_toggle">
 		<a href="#"><i class="icon-close icons"></i></a>
@@ -9,10 +11,12 @@
 	<div class="pcoded-inner-navbar main-menu">
 		<div class="">
 			<div class="main-menu-header">
-				<img class="img-80 img-radius" src="<%= request.getContextPath() %>/assets/images/avatar-4.jpg"
+				<img class="img-80 img-radius"
+					src="<%=request.getContextPath()%>/assets/images/avatar-4.jpg"
 					alt="User-Profile-Image">
 				<div class="user-details">
-					<span id="more-details"><%= request.getSession().getAttribute("usuario") %><i class="fa fa-caret-down"></i></span>
+					<span id="more-details"><%=request.getSession().getAttribute("usuario")%><i
+						class="fa fa-caret-down"></i></span>
 				</div>
 			</div>
 
@@ -21,7 +25,7 @@
 					<li class="more-details"><a href="user-profile.html"><i
 							class="ti-user"></i>View Profile</a> <a href="#!"><i
 							class="ti-settings"></i>Settings</a> <a
-						href="<%= request.getContextPath() %>/ServletLoginn?acao=logout"><i
+						href="<%=request.getContextPath()%>/ServletLoginn?acao=logout"><i
 							class="ti-layout-sidebar-left"></i>Logout</a></li>
 				</ul>
 			</div>
@@ -52,12 +56,16 @@
 					class="pcoded-mcaret"></span>
 			</a>
 				<ul class="pcoded-submenu">
-					<li class=" "><a href="<%= request.getContextPath() %>/ServletUsuarioControlleer?acao=listarUser"
-						class="waves-effect waves-dark"> <span class="pcoded-micon"><i
-								class="ti-angle-right"></i></span> <span class="pcoded-mtext"
-							data-i18n="nav.basic-components.alert">Usuário</span> <span
-							class="pcoded-mcaret"></span>
-					</a></li>
+					<!-- Condição para validar se meu usuário é um admin -->
+					<c:if test="true">
+						<li class=" ">
+							<a href="<%=request.getContextPath()%>/ServletUsuarioControlleer?acao=listarUser" class="waves-effect waves-dark"> 
+								<span class="pcoded-micon"><i class="ti-angle-right"></i></span> 
+								<span class="pcoded-mtext" data-i18n="nav.basic-components.alert">Usuário</span> 
+								<span class="pcoded-mcaret"></span>
+							</a>
+						</li>
+					</c:if>
 					<li class=" "><a href="breadcrumb.html"
 						class="waves-effect waves-dark"> <span class="pcoded-micon"><i
 								class="ti-angle-right"></i></span> <span class="pcoded-mtext"

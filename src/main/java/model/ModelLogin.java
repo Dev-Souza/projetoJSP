@@ -10,6 +10,10 @@ public class ModelLogin implements Serializable{
 	private String email;
 	private String login;
 	private String senha;
+	//Vindo do meu banco para ver se o usuário que está logando é admin
+	private boolean useradmin;
+	
+	
 	
 	public boolean isNovo() {
 		
@@ -52,6 +56,12 @@ public class ModelLogin implements Serializable{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
+
+	public boolean isUseradmin() {
+		return useradmin;
+	}
+
+	public void setUseradmin(boolean useradmin) {
+		this.useradmin = useradmin;
+	}
 }
