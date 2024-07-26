@@ -12,6 +12,8 @@ public class ModelLogin implements Serializable{
 	private String senha;
 	//Vindo do meu banco para ver se o usuário que está logando é admin
 	private boolean useradmin;
+	private String perfil;
+	private String sexo;
 	
 	
 	
@@ -63,5 +65,21 @@ public class ModelLogin implements Serializable{
 
 	public void setUseradmin(boolean useradmin) {
 		this.useradmin = useradmin;
+	}
+	
+	public void setPerfil(String perfil) {
+		this.perfil = perfil;
+	}
+	
+	public String getPerfil() {
+		return perfil;
+	}
+	
+	public void setSexo(String sexo) {
+		this.sexo = sexo;
+	}
+	
+	public String getSexo() {
+		return sexo;
 	}
 }

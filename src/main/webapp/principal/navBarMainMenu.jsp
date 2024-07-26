@@ -3,6 +3,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<c:set scope="session" var="perfil" value='<%= request.getSession().getAttribute("perfil").toString() %>'></c:set>
 <nav class="pcoded-navbar">
 	<div class="sidebar_toggle">
 		<a href="#"><i class="icon-close icons"></i></a>
@@ -57,7 +58,7 @@
 			</a>
 				<ul class="pcoded-submenu">
 					<!-- Condição para validar se meu usuário é um admin -->
-					<c:if test="true">
+					<c:if test="${perfil == 'ADMIN'}">
 						<li class=" ">
 							<a href="<%=request.getContextPath()%>/ServletUsuarioControlleer?acao=listarUser" class="waves-effect waves-dark"> 
 								<span class="pcoded-micon"><i class="ti-angle-right"></i></span> 

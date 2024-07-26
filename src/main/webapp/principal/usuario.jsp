@@ -1,3 +1,5 @@
+<%@page import="com.fasterxml.jackson.annotation.JsonCreator.Mode"%>
+<%@page import="model.ModelLogin"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
@@ -74,6 +76,34 @@
 																	class="float-label">Email: (exa@gmail.com)</label>
 															</div>
 															<div class="form-group form-default form-static-label">
+																<select class="form-control" aria-label="Default select example" name="perfil">
+																	<option selected disabled="disabled">[Selecione o perfil]</option>
+																	<option value="ADMIN" <%
+																	ModelLogin modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
+																	if (modelLogin != null && modelLogin.getPerfil().equals("ADMIN")){
+																		out.print("  ");
+																		out.print("selected=\"selected\"");
+																		out.print("  ");
+																	} %>>Administrador</option>
+																	<option value="SECRETARIA" <% 
+																	modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
+																	if (modelLogin != null && modelLogin.getPerfil().equals("SECRETARIA")){
+																		out.print("  ");
+																		out.print("selected=\"selected\"");
+																		out.print("  ");
+																	} %>>Secretária</option>
+																	<option value="AUXILIAR" <% 
+																	modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
+																	if (modelLogin != null && modelLogin.getPerfil().equals("AUXILIAR")){
+																		out.print("  ");
+																		out.print("selected=\"selected\"");
+																		out.print("  ");
+																	} %>>Auxiliar</option>
+																</select>
+																<span class="form-bar"></span> 
+																<label class="float-label">Perfil:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
 																<input type="text" name="login" id="login"
 																	class="form-control" required="required"
 																	value="${modelLogin.login}"> <span
@@ -85,6 +115,24 @@
 																	autocapitalize="off" value="${modelLogin.senha}">
 																<span class="form-bar"></span> <label
 																	class="float-label">Senha:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="radio" name="sexo" value="MASCULINO" <%
+																	modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+																	if(modelLogin != null && modelLogin.getSexo().equals("MASCULINO")){
+																		out.print("  ");
+																		out.print("checked=\"checked\"");
+																		out.print("  ");
+																	}
+																%>>Masculino</>
+																<input type="radio" name="sexo" value="FEMININO" <%
+																	modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+																	if(modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
+																		out.print("  ");
+																		out.print("checked=\"checked\"");
+																		out.print("  ");
+																	}
+																%>>Feminino</>
 															</div>
 															<button type="button"
 																class="btn btn-primary waves-effect waves-light"
@@ -204,86 +252,58 @@
 						.ajax(
 								{
 
-									method : "get",
+									method : "
+																get",
 									url : urlAction,
-									data : "nomeBusca=" + nomeBusca
-											+ "&acao=buscarajax",
-									success : function(response) {
+									data
+																: "nomeBusca=" + nomeBusca
+											+ "
+																&acao=buscarajax ",
+									success :
+																function(response) {
 
-										//Retorno para o usuário
-										var json = JSON.parse(response);
-
-										$('#tabelaResultados > tbody > tr')
-												.remove();
-
-										for (var i = 0; i < json.length; i++) {
-											$('#tabelaResultados > tbody')
-													.append(
-															'<tr> <td>'
+										//Retorno para o
+																usuário var json=JSON.parse(response);
+																$('#tabelaResultados>
+																tbody > tr') .remove(); for (var i = 0; i < json.length;
+																i++) { $('#tabelaResultados > tbody') .append( '
+																<tr>
+																	<td>' + json[i].id + '</td>
+																	<td>' + json[i].nome + '</td>
+																	<td><button type="button" class="btn btn-info"
+																			onclick="visualizarEditar('
 																	+ json[i].id
-																	+ '</td> <td>'
-																	+ json[i].nome
-																	+ '</td> <td><button type="button" class="btn btn-info" onclick="visualizarEditar('
-																	+ json[i].id
-																	+ ')"> Visualizar </button></td> </tr>')
-										}
+																	+ ')">
+																			Visualizar</button></td>
+																</tr>
+																') } document
+																.getElementById('totalResultados').textContent =
+																'Resultados: ' + json.length } }).fail( function(xhr,
+																status, errorThrown) { alert('Erro ao buscar usuário por
+																nome!' + xhr.responseText); }) } } function
+																excluirUsuarioComAjax() { if (confirm('Deseja realmente
+																excluir?')) { var urlAction =
+																document.getElementById('formUser').action; var idUser =
+																document.getElementById('id').value; $.ajax({ method :
+																"get", url : urlAction, data : "id=" + idUser +
+																"&acao=deletarajax", success : function(response) {
 
-										document
-												.getElementById('totalResultados').textContent = 'Resultados: '
-												+ json.length
-									}
+																limparForm(); alert(response); } }).fail(function(xhr,
+																status, errorThrown) { alert('Erro ao deletar usuário!'
+																+ xhr.responseText); }); } } function excluirUsuario() {
 
-								}).fail(
-								function(xhr, status, errorThrown) {
-									alert('Erro ao buscar usuário por nome!'
-											+ xhr.responseText);
-								})
-			}
-		}
+																if (confirm('Deseja realmente excluir?')) {
 
-		function excluirUsuarioComAjax() {
+																document.getElementById("formUser").method = 'get';
+																document.getElementById("acao").value = 'deletar';
+																document.getElementById("formUser").submit(); } }
 
-			if (confirm('Deseja realmente excluir?')) {
-
-				var urlAction = document.getElementById('formUser').action;
-				var idUser = document.getElementById('id').value;
-
-				$.ajax({
-
-					method : "get",
-					url : urlAction,
-					data : "id=" + idUser + "&acao=deletarajax",
-					success : function(response) {
-
-						limparForm();
-						alert(response);
-					}
-
-				}).fail(function(xhr, status, errorThrown) {
-					alert('Erro ao deletar usuário!' + xhr.responseText);
-				});
-			}
-		}
-
-		function excluirUsuario() {
-
-			if (confirm('Deseja realmente excluir?')) {
-
-				document.getElementById("formUser").method = 'get';
-				document.getElementById("acao").value = 'deletar';
-				document.getElementById("formUser").submit();
-			}
-		}
-
-		//Função que reseta formulário para criar um novo usuário
-		function limparForm() {
-			var elementos = document.getElementById("formUser").elements; //Retorna os elementos html dentro do form
-
-			for (var p = 0; p < elementos.length; p++) {
-				elementos[p].value = '';
-			}
-		}
-	</script>
+																//Função que reseta formulário para criar um novo
+																usuário function limparForm() { var elementos =
+																document.getElementById("formUser").elements; //Retorna
+																os elementos html dentro do form for (var p = 0; p <
+																elementos.length; p++) { elementos[p].value = ''; } }
+																</script>
 </body>
 
 </html>

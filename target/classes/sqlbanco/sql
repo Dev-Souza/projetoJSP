@@ -26,7 +26,14 @@ ALTER TABLE public.model_login
     OWNER to postgres;
     
 //Atualizações que precisam ser feitas logo após
+
+ALTER TABLE IF EXISTS public.model_login ADD COLUMN useradmin boolean NOT NULL DEFAULT false;
+
 ALTER TABLE IF EXISTS public.model_login ADD COLUMN usuario_id bigint NOT NULL DEFAULT 1;
 
 ALTER TABLE model_login ADD CONSTRAINT usuario_fk foreign key (usuario_id) REFERENCES model_login (id);
+
+ALTER TABLE model_login ADD COLUMN perfil CHARACTER VARYING(200);
+
+ALTER TABLE IF EXISTS public.model_login ADD COLUMN sexo character varying(200) COLLATE pg_catalog."default";
    
