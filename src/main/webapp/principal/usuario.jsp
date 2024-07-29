@@ -50,7 +50,7 @@
 												<div class="card">
 													<div class="card-block">
 														<h4 class="sub-title">Cadastro usuário</h4>
-														<form class="form-material"
+														<form class="form-material" enctype="multipart/form-data"
 															action="<%=request.getContextPath()%>/ServletUsuarioController"
 															method="post" id="formUser">
 
@@ -62,6 +62,14 @@
 																	value="${modelLogin.id}"> <span
 																	class="form-bar"></span> <label class="float-label">ID:</label>
 															</div>
+
+															<div class="form-group form-default input-group mb-4">
+																<div class="input-group-prepend">
+																	<img alt="Imagem Usuário" id="fotoembase64" src="" width="70px">
+																</div>
+																<input type="file" id="fileFoto" accept="image/*" onchange="visualizarImg('fotoembase64', 'fileFoto');" class="form-control-file" style="margin-top: 13px; margin-left: 5px">
+															</div>
+
 															<div class="form-group form-default form-static-label">
 																<input type="text" name="nome" id="nome"
 																	class="form-control" required="required"
@@ -76,32 +84,33 @@
 																	class="float-label">Email: (exa@gmail.com)</label>
 															</div>
 															<div class="form-group form-default form-static-label">
-																<select class="form-control" aria-label="Default select example" name="perfil">
-																	<option selected disabled="disabled">[Selecione o perfil]</option>
-																	<option value="ADMIN" <%
-																	ModelLogin modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
-																	if (modelLogin != null && modelLogin.getPerfil().equals("ADMIN")){
-																		out.print("  ");
-																		out.print("selected=\"selected\"");
-																		out.print("  ");
-																	} %>>Administrador</option>
-																	<option value="SECRETARIA" <% 
-																	modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
-																	if (modelLogin != null && modelLogin.getPerfil().equals("SECRETARIA")){
-																		out.print("  ");
-																		out.print("selected=\"selected\"");
-																		out.print("  ");
-																	} %>>Secretária</option>
-																	<option value="AUXILIAR" <% 
-																	modelLogin =  (ModelLogin) request.getAttribute("modelLogin");
-																	if (modelLogin != null && modelLogin.getPerfil().equals("AUXILIAR")){
-																		out.print("  ");
-																		out.print("selected=\"selected\"");
-																		out.print("  ");
-																	} %>>Auxiliar</option>
-																</select>
-																<span class="form-bar"></span> 
-																<label class="float-label">Perfil:</label>
+																<select class="form-control"
+																	aria-label="Default select example" name="perfil">
+																	<option selected disabled="disabled">[Selecione
+																		o perfil]</option>
+																	<option value="ADMIN"
+																		<%ModelLogin modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+if (modelLogin != null && modelLogin.getPerfil().equals("ADMIN")) {
+	out.print("  ");
+	out.print("selected=\"selected\"");
+	out.print("  ");
+}%>>Administrador</option>
+																	<option value="SECRETARIA"
+																		<%modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+if (modelLogin != null && modelLogin.getPerfil().equals("SECRETARIA")) {
+	out.print("  ");
+	out.print("selected=\"selected\"");
+	out.print("  ");
+}%>>Secretária</option>
+																	<option value="AUXILIAR"
+																		<%modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+if (modelLogin != null && modelLogin.getPerfil().equals("AUXILIAR")) {
+	out.print("  ");
+	out.print("selected=\"selected\"");
+	out.print("  ");
+}%>>Auxiliar</option>
+																</select> <span class="form-bar"></span> <label
+																	class="float-label">Perfil:</label>
 															</div>
 															<div class="form-group form-default form-static-label">
 																<input type="text" name="login" id="login"
@@ -117,22 +126,20 @@
 																	class="float-label">Senha:</label>
 															</div>
 															<div class="form-group form-default form-static-label">
-																<input type="radio" name="sexo" value="MASCULINO" <%
-																	modelLogin = (ModelLogin) request.getAttribute("modelLogin");
-																	if(modelLogin != null && modelLogin.getSexo().equals("MASCULINO")){
-																		out.print("  ");
-																		out.print("checked=\"checked\"");
-																		out.print("  ");
-																	}
-																%>>Masculino</>
-																<input type="radio" name="sexo" value="FEMININO" <%
-																	modelLogin = (ModelLogin) request.getAttribute("modelLogin");
-																	if(modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
-																		out.print("  ");
-																		out.print("checked=\"checked\"");
-																		out.print("  ");
-																	}
-																%>>Feminino</>
+																<input type="radio" name="sexo" value="MASCULINO"
+																	<%modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+if (modelLogin != null && modelLogin.getSexo().equals("MASCULINO")) {
+	out.print("  ");
+	out.print("checked=\"checked\"");
+	out.print("  ");
+}%>>Masculino</>
+																<input type="radio" name="sexo" value="FEMININO"
+																	<%modelLogin = (ModelLogin) request.getAttribute("modelLogin");
+if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
+	out.print("  ");
+	out.print("checked=\"checked\"");
+	out.print("  ");
+}%>>Feminino</>
 															</div>
 															<button type="button"
 																class="btn btn-primary waves-effect waves-light"
@@ -165,7 +172,8 @@
 														<tr>
 															<td><c:out value="${ml.id}"></c:out></td>
 															<td><c:out value="${ml.nome}"></c:out></td>
-															<td><a class="btn btn-primary" href="<%= request.getContextPath() %>/ServletUsuarioController?acao=buscarEditar&id=${ml.id}" >Ver</a></td>
+															<td><a class="btn btn-primary"
+																href="<%= request.getContextPath() %>/ServletUsuarioController?acao=buscarEditar&id=${ml.id}">Ver</a></td>
 														</tr>
 													</c:forEach>
 												</tbody>
@@ -233,6 +241,25 @@
 	</div>
 
 	<script type="text/javascript">
+		function visualizarImg(fotoembase64, filefoto) {
+			
+			alert('adsd');
+			
+		    var preview = document.getElementById(fotoembase64); // Campo img do HTML
+		    var fileUser = document.getElementById(filefoto).files[0];
+		    var reader = new FileReader();
+	
+		    reader.onloadend = function () {
+		        preview.src = reader.result; // Carrega a foto na tela
+		    };
+	
+		    if (fileUser) {
+		        reader.readAsDataURL(fileUser); // Preview da imagem
+		    } else {
+		        preview.src = '';
+		    }
+		}
+		
 		function visualizarEditar(id) {
 
 			var urlAction = document.getElementById('formUser').action;

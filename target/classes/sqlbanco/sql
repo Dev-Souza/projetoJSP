@@ -37,3 +37,6 @@ ALTER TABLE model_login ADD COLUMN perfil CHARACTER VARYING(200);
 
 ALTER TABLE IF EXISTS public.model_login ADD COLUMN sexo character varying(200) COLLATE pg_catalog."default";
    
+ALTER TABLE model_login ADD COLUMN fotouser text;
+
+ALTER TABLE model_login ADD COLUMN extensaofotouser CHARACTER VARYING(10);
