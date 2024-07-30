@@ -65,9 +65,14 @@
 
 															<div class="form-group form-default input-group mb-4">
 																<div class="input-group-prepend">
-																	<img alt="Imagem Usuário" id="fotoembase64" src="" width="70px">
+																	<img alt="Imagem Usuário" id="fotoembase64" src=""
+																		width="70px">
 																</div>
-																<input type="file" id="fileFoto" accept="image/*" onchange="visualizarImg('fotoembase64', 'fileFoto');" class="form-control-file" style="margin-top: 13px; margin-left: 5px">
+																<input type="file" id="fileFoto" name="fileFoto"
+																	accept="image/*"
+																	onchange="visualizarImg('fotoembase64', 'fileFoto');"
+																	class="form-control-file"
+																	style="margin-top: 15px; margin-left: 5px;">
 															</div>
 
 															<div class="form-group form-default form-static-label">
@@ -190,10 +195,6 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 			</div>
 		</div>
 	</div>
-
-	<!-- Arquivo aonde estão os links do js -->
-	<jsp:include page="javaScriptFile.jsp"></jsp:include>
-
 	<!-- Modal -->
 	<div class="modal fade" id="exampleModalUsuario" tabindex="-1"
 		role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -239,98 +240,102 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 			</div>
 		</div>
 	</div>
-
+	<!-- Arquivo aonde estão os links do js -->
+	<jsp:include page="javaScriptFile.jsp"></jsp:include>
 	<script type="text/javascript">
-		function visualizarImg(fotoembase64, filefoto) {
-			
-			alert('adsd');
-			
-		    var preview = document.getElementById(fotoembase64); // Campo img do HTML
-		    var fileUser = document.getElementById(filefoto).files[0];
-		    var reader = new FileReader();
-	
-		    reader.onloadend = function () {
-		        preview.src = reader.result; // Carrega a foto na tela
-		    };
-	
-		    if (fileUser) {
-		        reader.readAsDataURL(fileUser); // Preview da imagem
-		    } else {
-		        preview.src = '';
-		    }
-		}
-		
-		function visualizarEditar(id) {
+        function visualizarImg(fotoembase64, filefoto) {
+            var preview = document.getElementById(fotoembase64);
+            if (!preview) {
+                console.error("Elemento de visualização não encontrado");
+                return;
+            }
 
-			var urlAction = document.getElementById('formUser').action;
+            var fileInput = document.getElementById(filefoto);
+            if (!fileInput) {
+                console.error("Elemento de entrada de arquivo não encontrado");
+                return;
+            }
 
-			window.location.href = urlAction + '?acao=buscarEditar&id=' + id
+            var fileUser = fileInput.files[0];
+            if (!fileUser) {
+                console.error("Nenhum arquivo selecionado");
+                preview.src = '';
+                return;
+            }
 
-		}
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                preview.src = reader.result; // Carrega a foto na tela
+            };
 
-		function buscarUsuarioComAjax() {
-			var nomeBusca = document.getElementById('nomeBusca').value;
+            reader.readAsDataURL(fileUser); // Preview da imagem
+        }
 
-			if (nomeBusca != null && nomeBusca != '' && nomeBusca.trim() != '') { //Validando o que está vindo
+        // Adiciona a função ao escopo global
+        window.visualizarImg = visualizarImg;
 
-				var urlAction = document.getElementById('formUser').action;
+        function visualizarEditar(id) {
+            var urlAction = document.getElementById('formUser').action;
+            window.location.href = urlAction + '?acao=buscarEditar&id=' + id;
+        }
 
-				$
-						.ajax(
-								{
+        function buscarUsuarioComAjax() {
+            var nomeBusca = document.getElementById('nomeBusca').value;
+            if (nomeBusca && nomeBusca.trim() !== '') {
+                var urlAction = document.getElementById('formUser').action;
+                $.ajax({
+                    method: "get",
+                    url: urlAction,
+                    data: "nomeBusca=" + nomeBusca + "&acao=buscarajax",
+                    success: function(response) {
+                        var json = JSON.parse(response);
+                        $('#tabelaResultados > tbody > tr').remove();
+                        for (var i = 0; i < json.length; i++) {
+                            $('#tabelaResultados > tbody').append(
+                                '<tr><td>' + json[i].id + '</td><td>' + json[i].nome + '</td><td><button type="button" class="btn btn-info" onclick="visualizarEditar(' + json[i].id + ')">Visualizar</button></td></tr>'
+                            );
+                        }
+                        document.getElementById('totalResultados').textContent = 'Resultados: ' + json.length;
+                    }
+                }).fail(function(xhr, status, errorThrown) {
+                    alert('Erro ao buscar usuário por nome!' + xhr.responseText);
+                });
+            }
+        }
 
-									method : "
-																get",
-									url : urlAction,
-									data
-																: "nomeBusca=" + nomeBusca
-											+ "
-																&acao=buscarajax ",
-									success :
-																function(response) {
+        function excluirUsuarioComAjax() {
+            if (confirm('Deseja realmente excluir?')) {
+                var urlAction = document.getElementById('formUser').action;
+                var idUser = document.getElementById('id').value;
+                $.ajax({
+                    method: "get",
+                    url: urlAction,
+                    data: "id=" + idUser + "&acao=deletarajax",
+                    success: function(response) {
+                        limparForm();
+                        alert(response);
+                    }
+                }).fail(function(xhr, status, errorThrown) {
+                    alert('Erro ao deletar usuário!' + xhr.responseText);
+                });
+            }
+        }
 
-										//Retorno para o
-																usuário var json=JSON.parse(response);
-																$('#tabelaResultados>
-																tbody > tr') .remove(); for (var i = 0; i < json.length;
-																i++) { $('#tabelaResultados > tbody') .append( '
-																<tr>
-																	<td>' + json[i].id + '</td>
-																	<td>' + json[i].nome + '</td>
-																	<td><button type="button" class="btn btn-info"
-																			onclick="visualizarEditar('
-																	+ json[i].id
-																	+ ')">
-																			Visualizar</button></td>
-																</tr>
-																') } document
-																.getElementById('totalResultados').textContent =
-																'Resultados: ' + json.length } }).fail( function(xhr,
-																status, errorThrown) { alert('Erro ao buscar usuário por
-																nome!' + xhr.responseText); }) } } function
-																excluirUsuarioComAjax() { if (confirm('Deseja realmente
-																excluir?')) { var urlAction =
-																document.getElementById('formUser').action; var idUser =
-																document.getElementById('id').value; $.ajax({ method :
-																"get", url : urlAction, data : "id=" + idUser +
-																"&acao=deletarajax", success : function(response) {
+        function excluirUsuario() {
+            if (confirm('Deseja realmente excluir?')) {
+                document.getElementById("formUser").method = 'get';
+                document.getElementById("acao").value = 'deletar';
+                document.getElementById("formUser").submit();
+            }
+        }
 
-																limparForm(); alert(response); } }).fail(function(xhr,
-																status, errorThrown) { alert('Erro ao deletar usuário!'
-																+ xhr.responseText); }); } } function excluirUsuario() {
-
-																if (confirm('Deseja realmente excluir?')) {
-
-																document.getElementById("formUser").method = 'get';
-																document.getElementById("acao").value = 'deletar';
-																document.getElementById("formUser").submit(); } }
-
-																//Função que reseta formulário para criar um novo
-																usuário function limparForm() { var elementos =
-																document.getElementById("formUser").elements; //Retorna
-																os elementos html dentro do form for (var p = 0; p <
-																elementos.length; p++) { elementos[p].value = ''; } }
-																</script>
+        function limparForm() {
+            var elementos = document.getElementById("formUser").elements;
+            for (var p = 0; p < elementos.length; p++) {
+                elementos[p].value = '';
+            }
+        }
+    </script>
 </body>
 
 </html>

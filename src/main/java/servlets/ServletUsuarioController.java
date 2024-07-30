@@ -3,6 +3,10 @@ package servlets;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dao.DAOUsuarioRepository;
@@ -12,6 +16,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import model.ModelLogin;
 
 @MultipartConfig
@@ -111,6 +116,14 @@ public class ServletUsuarioController extends ServletGenericUtil{
 			String senha = request.getParameter("senha");
 			String perfil = request.getParameter("perfil");
 			String sexo = request.getParameter("sexo");
+			
+			//Para pegar minha imagem do formulário
+			if (ServletFileUpload.isMultipartContent((javax.servlet.http.HttpServletRequest) request)) {
+				Part part = request.getPart("fileFoto"); //Pega foto da tela
+				byte[] foto = IOUtils.toByteArray(part.getInputStream());; //Converte imagem para byte
+				String imagemBase64 = new Base64().encodeBase64String(foto);
+				System.out.println(imagemBase64);
+			}
 
 			ModelLogin modelLogin = new ModelLogin();
 			modelLogin.setId(id != null && !id.isEmpty() ? Long.parseLong(id) : null);
