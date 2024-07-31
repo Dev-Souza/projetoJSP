@@ -65,11 +65,19 @@
 
 															<div class="form-group form-default input-group mb-4">
 																<div class="input-group-prepend">
-																	<c:if test="${modelLogin.fotouser != '' && modelLogin.fotouser != null}">
-																		<img alt="Imagem Usuário" id="fotoembase64" src="${modelLogin.fotouser}" width="70px">
+																	<c:if
+																		test="${modelLogin.fotouser != '' && modelLogin.fotouser != null}">
+																		<a
+																			href="<%= request.getContextPath()%>/ServletUsuarioControlleer?acao=downloadFoto&id=${modelLogin.id}">
+																			<img alt="Imagem Usuário" id="fotoembase64"
+																			src="${modelLogin.fotouser}" width="70px">
+																		</a>
 																	</c:if>
-																	<c:if test="${modelLogin.fotouser == '' || modelLogin.fotouser == null}">
-																		<img alt="Imagem Usuário" id="fotoembase64" src="./assets/images/imagensMinha/usuarioSemFoto.jpg" width="70px">
+																	<c:if
+																		test="${modelLogin.fotouser == '' || modelLogin.fotouser == null}">
+																		<img alt="Imagem Usuário" id="fotoembase64"
+																			src="./assets/images/imagensMinha/usuarioSemFoto.jpg"
+																			width="70px">
 																	</c:if>
 																</div>
 																<input type="file" id="fileFoto" name="fileFoto"
@@ -120,6 +128,42 @@ if (modelLogin != null && modelLogin.getPerfil().equals("AUXILIAR")) {
 }%>>Auxiliar</option>
 																</select> <span class="form-bar"></span> <label
 																	class="float-label">Perfil:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" onblur="pesquisarCep();" name="cep" id="cep"
+																	class="form-control" required="required"
+																	value="${modelLogin.cep}"> <span
+																	class="form-bar"></span> <label class="float-label">Cep:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" name="logradouro" id="logradouro"
+																	class="form-control" required="required"
+																	value="${modelLogin.logradouro}"> <span
+																	class="form-bar"></span> <label class="float-label">Logradouro:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" name="bairro" id="bairro"
+																	class="form-control" required="required"
+																	value="${modelLogin.bairro}"> <span
+																	class="form-bar"></span> <label class="float-label">Bairro:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" name="localidade" id="localidade"
+																	class="form-control" required="required"
+																	value="${modelLogin.localidade}"> <span
+																	class="form-bar"></span> <label class="float-label">Localidade:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" name="uf" id="uf"
+																	class="form-control" required="required"
+																	value="${modelLogin.uf}"> <span
+																	class="form-bar"></span> <label class="float-label">UF:</label>
+															</div>
+															<div class="form-group form-default form-static-label">
+																<input type="text" name="numero" id="numero"
+																	class="form-control" required="required"
+																	value="${modelLogin.numero}"> <span
+																	class="form-bar"></span> <label class="float-label">Número:</label>
 															</div>
 															<div class="form-group form-default form-static-label">
 																<input type="text" name="login" id="login"
@@ -247,99 +291,130 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 	<!-- Arquivo aonde estão os links do js -->
 	<jsp:include page="javaScriptFile.jsp"></jsp:include>
 	<script type="text/javascript">
-        function visualizarImg(fotoembase64, filefoto) {
-            var preview = document.getElementById(fotoembase64);
-            if (!preview) {
-                console.error("Elemento de visualização não encontrado");
-                return;
-            }
+		function pesquisarCep() {
+			var cep = $("#cep").val();
+			
+			//Consulta o webservice viacep.com.br/
+            $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+				
+            	if (!("erro" in dados)) {
+            		 $("#cep").val(dados.cep);
+            		 $("#logradouro").val(dados.logradouro);
+                     $("#bairro").val(dados.bairro);
+                     $("#localidade").val(dados.localidade);
+                     $("#uf").val(dados.uf);
+            	}
+			});
+		}
+		
+		function visualizarImg(fotoembase64, filefoto) {
+			var preview = document.getElementById(fotoembase64);
+			if (!preview) {
+				console.error("Elemento de visualização não encontrado");
+				return;
+			}
 
-            var fileInput = document.getElementById(filefoto);
-            if (!fileInput) {
-                console.error("Elemento de entrada de arquivo não encontrado");
-                return;
-            }
+			var fileInput = document.getElementById(filefoto);
+			if (!fileInput) {
+				console.error("Elemento de entrada de arquivo não encontrado");
+				return;
+			}
 
-            var fileUser = fileInput.files[0];
-            if (!fileUser) {
-                console.error("Nenhum arquivo selecionado");
-                preview.src = '';
-                return;
-            }
+			var fileUser = fileInput.files[0];
+			if (!fileUser) {
+				console.error("Nenhum arquivo selecionado");
+				preview.src = '';
+				return;
+			}
 
-            var reader = new FileReader();
-            reader.onloadend = function() {
-                preview.src = reader.result; // Carrega a foto na tela
-            };
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				preview.src = reader.result; // Carrega a foto na tela
+			};
 
-            reader.readAsDataURL(fileUser); // Preview da imagem
-        }
+			reader.readAsDataURL(fileUser); // Preview da imagem
+		}
 
-        // Adiciona a função ao escopo global
-        window.visualizarImg = visualizarImg;
+		// Adiciona a função ao escopo global
+		window.visualizarImg = visualizarImg;
+		window.pesquisarCep = pesquisarCep;
 
-        function visualizarEditar(id) {
-            var urlAction = document.getElementById('formUser').action;
-            window.location.href = urlAction + '?acao=buscarEditar&id=' + id;
-        }
+		function visualizarEditar(id) {
+			var urlAction = document.getElementById('formUser').action;
+			window.location.href = urlAction + '?acao=buscarEditar&id=' + id;
+		}
 
-        function buscarUsuarioComAjax() {
-            var nomeBusca = document.getElementById('nomeBusca').value;
-            if (nomeBusca && nomeBusca.trim() !== '') {
-                var urlAction = document.getElementById('formUser').action;
-                $.ajax({
-                    method: "get",
-                    url: urlAction,
-                    data: "nomeBusca=" + nomeBusca + "&acao=buscarajax",
-                    success: function(response) {
-                        var json = JSON.parse(response);
-                        $('#tabelaResultados > tbody > tr').remove();
-                        for (var i = 0; i < json.length; i++) {
-                            $('#tabelaResultados > tbody').append(
-                                '<tr><td>' + json[i].id + '</td><td>' + json[i].nome + '</td><td><button type="button" class="btn btn-info" onclick="visualizarEditar(' + json[i].id + ')">Visualizar</button></td></tr>'
-                            );
-                        }
-                        document.getElementById('totalResultados').textContent = 'Resultados: ' + json.length;
-                    }
-                }).fail(function(xhr, status, errorThrown) {
-                    alert('Erro ao buscar usuário por nome!' + xhr.responseText);
-                });
-            }
-        }
+		function buscarUsuarioComAjax() {
+			var nomeBusca = document.getElementById('nomeBusca').value;
+			if (nomeBusca && nomeBusca.trim() !== '') {
+				var urlAction = document.getElementById('formUser').action;
+				$
+						.ajax(
+								{
+									method : "get",
+									url : urlAction,
+									data : "nomeBusca=" + nomeBusca
+											+ "&acao=buscarajax",
+									success : function(response) {
+										var json = JSON.parse(response);
+										$('#tabelaResultados > tbody > tr')
+												.remove();
+										for (var i = 0; i < json.length; i++) {
+											$('#tabelaResultados > tbody')
+													.append(
+															'<tr><td>'
+																	+ json[i].id
+																	+ '</td><td>'
+																	+ json[i].nome
+																	+ '</td><td><button type="button" class="btn btn-info" onclick="visualizarEditar('
+																	+ json[i].id
+																	+ ')">Visualizar</button></td></tr>');
+										}
+										document
+												.getElementById('totalResultados').textContent = 'Resultados: '
+												+ json.length;
+									}
+								}).fail(
+								function(xhr, status, errorThrown) {
+									alert('Erro ao buscar usuário por nome!'
+											+ xhr.responseText);
+								});
+			}
+		}
 
-        function excluirUsuarioComAjax() {
-            if (confirm('Deseja realmente excluir?')) {
-                var urlAction = document.getElementById('formUser').action;
-                var idUser = document.getElementById('id').value;
-                $.ajax({
-                    method: "get",
-                    url: urlAction,
-                    data: "id=" + idUser + "&acao=deletarajax",
-                    success: function(response) {
-                        limparForm();
-                        alert(response);
-                    }
-                }).fail(function(xhr, status, errorThrown) {
-                    alert('Erro ao deletar usuário!' + xhr.responseText);
-                });
-            }
-        }
+		function excluirUsuarioComAjax() {
+			if (confirm('Deseja realmente excluir?')) {
+				var urlAction = document.getElementById('formUser').action;
+				var idUser = document.getElementById('id').value;
+				$.ajax({
+					method : "get",
+					url : urlAction,
+					data : "id=" + idUser + "&acao=deletarajax",
+					success : function(response) {
+						limparForm();
+						alert(response);
+					}
+				}).fail(function(xhr, status, errorThrown) {
+					alert('Erro ao deletar usuário!' + xhr.responseText);
+				});
+			}
+		}
 
-        function excluirUsuario() {
-            if (confirm('Deseja realmente excluir?')) {
-                document.getElementById("formUser").method = 'get';
-                document.getElementById("acao").value = 'deletar';
-                document.getElementById("formUser").submit();
-            }
-        }
+		function excluirUsuario() {
+			if (confirm('Deseja realmente excluir?')) {
+				document.getElementById("formUser").method = 'get';
+				document.getElementById("acao").value = 'deletar';
+				document.getElementById("formUser").submit();
+			}
+		}
 
-        function limparForm() {
-            var elementos = document.getElementById("formUser").elements;
-            for (var p = 0; p < elementos.length; p++) {
-                elementos[p].value = '';
-            }
-        }
-    </script>
+		function limparForm() {
+			var elementos = document.getElementById("formUser").elements;
+			for (var p = 0; p < elementos.length; p++) {
+				elementos[p].value = '';
+			}
+		}
+	</script>
 </body>
 
 </html>
