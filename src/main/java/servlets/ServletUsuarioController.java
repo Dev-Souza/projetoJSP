@@ -105,63 +105,66 @@ public class ServletUsuarioController extends ServletGenericUtil{
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		try {
-			String msg = "Operação realizada com sucesso!";
+	        throws ServletException, IOException {
+	    try {
+	        String msg = "Operação realizada com sucesso!";
 
-			String id = request.getParameter("id");
-			String nome = request.getParameter("nome");
-			String email = request.getParameter("email");
-			String login = request.getParameter("login");
-			String senha = request.getParameter("senha");
-			String perfil = request.getParameter("perfil");
-			String sexo = request.getParameter("sexo");
-			
-			//Para pegar minha imagem do formulário
-			if (ServletFileUpload.isMultipartContent((javax.servlet.http.HttpServletRequest) request)) {
-				Part part = request.getPart("fileFoto"); //Pega foto da tela
-				byte[] foto = IOUtils.toByteArray(part.getInputStream());; //Converte imagem para byte
-				String imagemBase64 = new Base64().encodeBase64String(foto);
-				System.out.println(imagemBase64);
-			}
+	        String id = request.getParameter("id");
+	        String nome = request.getParameter("nome");
+	        String email = request.getParameter("email");
+	        String login = request.getParameter("login");
+	        String senha = request.getParameter("senha");
+	        String perfil = request.getParameter("perfil");
+	        String sexo = request.getParameter("sexo");
+	        
+	        ModelLogin modelLogin = new ModelLogin();
+	        modelLogin.setId(id != null && !id.isEmpty() ? Long.parseLong(id) : null);
+	        modelLogin.setNome(nome);
+	        modelLogin.setEmail(email);
+	        modelLogin.setLogin(login);
+	        modelLogin.setSenha(senha);
+	        modelLogin.setPerfil(perfil);
+	        modelLogin.setSexo(sexo);
 
-			ModelLogin modelLogin = new ModelLogin();
-			modelLogin.setId(id != null && !id.isEmpty() ? Long.parseLong(id) : null);
-			modelLogin.setNome(nome);
-			modelLogin.setEmail(email);
-			modelLogin.setLogin(login);
-			modelLogin.setSenha(senha);
-			modelLogin.setPerfil(perfil);
-			modelLogin.setSexo(sexo);
+	        // Verifica se a solicitação é multipart
+	        Part part = request.getPart("fileFoto"); // Pega a foto do formulário
 
-			// Rotina que verifica se já existe usuário com este login informado
-			if (daoUsuarioRepository.validarLogin(modelLogin.getLogin()) && modelLogin.getId() == null) {
-				msg = "Já existe um usuário com este login, informe outro login";
-			} else {
-				if (modelLogin.isNovo()) {
-					msg = "Gravado com sucesso!";
-				} else {
-					msg = "Atualizado com sucesso!";
-				}
-				// Operação para gravar no banco
-				modelLogin = daoUsuarioRepository.gravarUsuario(modelLogin, super.getUserLogado(request));
-			}
-			
-			//Para recarregar todas as vezes meus usuários
-			List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
-			
-			request.setAttribute("msg", msg);
-			request.setAttribute("modelLogin", modelLogin);
-			//Atributo do recarregamento
-			request.setAttribute("modelLogins", modelLogins);
-			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
+	        if (part != null && part.getSize() > 0) {
+	            byte[] foto = IOUtils.toByteArray(part.getInputStream()); // Converte a imagem para bytes
+	            String imagemBase64 = "data:image/" + part.getContentType().split("/")[1] + ";base64," + new Base64().encodeBase64String(foto);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			RequestDispatcher redirecionar = request.getRequestDispatcher("erro.jsp");
-			request.setAttribute("msg", e.getMessage());
-			redirecionar.forward(request, response);
-		}
+	            modelLogin.setFotouser(imagemBase64);
+	            modelLogin.setExtensaofotouser(part.getContentType().split("/")[1]);
+	        }
+
+	        // Rotina que verifica se já existe usuário com este login informado
+	        if (daoUsuarioRepository.validarLogin(modelLogin.getLogin()) && modelLogin.getId() == null) {
+	            msg = "Já existe um usuário com este login, informe outro login";
+	        } else {
+	            if (modelLogin.isNovo()) {
+	                msg = "Gravado com sucesso!";
+	            } else {
+	                msg = "Atualizado com sucesso!";
+	            }
+	            // Operação para gravar no banco
+	            modelLogin = daoUsuarioRepository.gravarUsuario(modelLogin, super.getUserLogado(request));
+	        }
+
+	        // Para recarregar todas as vezes meus usuários
+	        List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
+	        
+	        request.setAttribute("msg", msg);
+	        request.setAttribute("modelLogin", modelLogin);
+	        // Atributo do recarregamento
+	        request.setAttribute("modelLogins", modelLogins);
+	        request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        RequestDispatcher redirecionar = request.getRequestDispatcher("erro.jsp");
+	        request.setAttribute("msg", e.getMessage());
+	        redirecionar.forward(request, response);
+	    }
 	}
 
 }
