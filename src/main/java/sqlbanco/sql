@@ -41,4 +41,20 @@ ALTER TABLE model_login ADD COLUMN fotouser text;
 
 ALTER TABLE model_login ADD COLUMN extensaofotouser CHARACTER VARYING(10);
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN cep character varying(200) COLLATE pg_catalog."default";
+    
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN logradouro character varying(250) COLLATE pg_catalog."default";
+    
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN bairro character varying(250) COLLATE pg_catalog."default";
+
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN localidade character varying(250) COLLATE pg_catalog."default";
+    
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN uf character varying(250) COLLATE pg_catalog."default";
+    
+ALTER TABLE IF EXISTS public.model_login
+    ADD COLUMN numero character varying(250) COLLATE pg_catalog."default";
