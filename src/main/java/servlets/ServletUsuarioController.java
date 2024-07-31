@@ -49,6 +49,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 				request.setAttribute("msg", msg);
 				//Atributo do recarregamento
 				request.setAttribute("modelLogins", modelLogins);
+				request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 			} else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("deletarajax")) {
 
@@ -83,6 +84,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 				request.setAttribute("modelLogin", modelLogin);
 				//Atributo do recarregamento
 				request.setAttribute("modelLogins", modelLogins);
+				request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 				
 			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("listarUser")) {
@@ -91,6 +93,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 				
 				request.setAttribute("msg", "Usuário carregados");
 				request.setAttribute("modelLogins", modelLogins);
+				request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 				
 			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("downloadFoto")) {
@@ -106,6 +109,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 			}else {
 				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 				request.setAttribute("modelLogins", modelLogins);
+				request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 			}
 		} catch (Exception e) {
@@ -181,6 +185,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 	        request.setAttribute("modelLogin", modelLogin);
 	        // Atributo do recarregamento
 	        request.setAttribute("modelLogins", modelLogins);
+	        request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 	        request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 
 	    } catch (Exception e) {
