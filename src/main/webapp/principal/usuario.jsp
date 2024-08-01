@@ -130,8 +130,8 @@ if (modelLogin != null && modelLogin.getPerfil().equals("AUXILIAR")) {
 																	class="float-label">Perfil:</label>
 															</div>
 															<div class="form-group form-default form-static-label">
-																<input type="text" onblur="pesquisarCep();" name="cep" id="cep"
-																	class="form-control" required="required"
+																<input type="text" onblur="pesquisarCep();" name="cep"
+																	id="cep" class="form-control" required="required"
 																	value="${modelLogin.cep}"> <span
 																	class="form-bar"></span> <label class="float-label">Cep:</label>
 															</div>
@@ -232,6 +232,20 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 												</tbody>
 											</table>
 										</div>
+										<!-- Paginação da minha linha de usuários -->
+										<nav aria-label="Page navigation example">
+											<ul class="pagination">
+												<%
+													int totalPagina = (int) request.getAttribute("totalPagina");
+												
+													for (int i = 0; i < totalPagina; i++){
+														String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5);
+														out.print("<li class=\"page-item\"><a class=\"page-link\" href=\""+ url +"\">"+(i + 1)+"</a></li>");
+													}
+												%>
+												
+											</ul>
+										</nav>
 									</div>
 									<!-- Page-body end -->
 								</div>
@@ -293,20 +307,21 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 	<script type="text/javascript">
 		function pesquisarCep() {
 			var cep = $("#cep").val();
-			
+
 			//Consulta o webservice viacep.com.br/
-            $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
-				
-            	if (!("erro" in dados)) {
-            		 $("#cep").val(dados.cep);
-            		 $("#logradouro").val(dados.logradouro);
-                     $("#bairro").val(dados.bairro);
-                     $("#localidade").val(dados.localidade);
-                     $("#uf").val(dados.uf);
-            	}
-			});
+			$.getJSON("https://viacep.com.br/ws/" + cep + "/json/?callback=?",
+					function(dados) {
+
+						if (!("erro" in dados)) {
+							$("#cep").val(dados.cep);
+							$("#logradouro").val(dados.logradouro);
+							$("#bairro").val(dados.bairro);
+							$("#localidade").val(dados.localidade);
+							$("#uf").val(dados.uf);
+						}
+					});
 		}
-		
+
 		function visualizarImg(fotoembase64, filefoto) {
 			var preview = document.getElementById(fotoembase64);
 			if (!preview) {

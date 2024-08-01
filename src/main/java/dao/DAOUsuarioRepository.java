@@ -298,6 +298,8 @@ public class DAOUsuarioRepository {
 		// Armazena minha busca nesse resultado
 		ResultSet resultado = total.executeQuery();
 		
+		resultado.next();
+		
 		Double cadastros = resultado.getDouble("total");
 		
 		Double porpagina = 5.0;

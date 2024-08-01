@@ -106,6 +106,15 @@ public class ServletUsuarioController extends ServletGenericUtil{
 					response.setHeader("Content-Disposition", "attachment;filename=arquivo." + modelLogin.getExtensaofotouser());
 					response.getOutputStream().write(new Base64().decodeBase64(modelLogin.getFotouser().split("\\,")[1]));
 				}
+			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("paginar")) {
+				
+				Integer offset = Integer.parseInt(request.getParameter("pagina"));
+				
+				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjaxPaginada(this.getUserLogado(request), offset);
+				
+				request.setAttribute("modelLogins", modelLogins);
+			    request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
+				request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 			}else {
 				List<ModelLogin> modelLogins = daoUsuarioRepository.buscarUsuarioAjax(super.getUserLogado(request));
 				request.setAttribute("modelLogins", modelLogins);
