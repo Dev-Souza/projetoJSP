@@ -69,6 +69,7 @@ public class ServletUsuarioController extends ServletGenericUtil{
 				ObjectMapper mapper = new ObjectMapper();
 				String json = mapper.writeValueAsString(dadosJsonUser);
 				
+				response.addHeader("totalPagina", "" +daoUsuarioRepository.consultaUsuarioLisTotalPaginaPaginacao(nomeBuscado, super.getUserLogado(request)));
 				response.getWriter().write(json);
 				
 			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("buscarEditar")) {

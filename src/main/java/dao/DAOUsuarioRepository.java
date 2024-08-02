@@ -288,30 +288,30 @@ public class DAOUsuarioRepository {
 		}
 		return retorno;
 	}
-	
-	public int totalPagina(Long userLogado) throws Exception{
-		
+
+	public int totalPagina(Long userLogado) throws Exception {
+
 		String sql = "SELECT count(1) as total FROM model_login WHERE usuario_id = ?";
 		PreparedStatement total = connection.prepareStatement(sql);
 		total.setLong(1, userLogado);
 
 		// Armazena minha busca nesse resultado
 		ResultSet resultado = total.executeQuery();
-		
+
 		resultado.next();
-		
+
 		Double cadastros = resultado.getDouble("total");
-		
+
 		Double porpagina = 5.0;
-		
+
 		Double pagina = cadastros / porpagina;
-		
+
 		Double resto = pagina % 2;
-		
+
 		if (resto > 0) {
-			pagina ++;
+			pagina++;
 		}
-		
+
 		return pagina.intValue();
 	}
 
@@ -342,6 +342,34 @@ public class DAOUsuarioRepository {
 
 		}
 		return retorno;
+	}
+
+	public int consultaUsuarioLisTotalPaginaPaginacao(String nome, Long userLogado) throws Exception {
+
+		String sql = "SELECT COUNT(1) as total FROM model_login WHERE upper(nome) LIKE upper(?) AND useradmin is false AND usuario_id = ?";
+		
+		PreparedStatement busca = connection.prepareStatement(sql);
+		busca.setString(1, "%" + nome + "%");
+		busca.setLong(2, userLogado);
+
+		// Armazena minha busca nesse resultado
+		ResultSet resultado = busca.executeQuery();
+
+		resultado.next();
+
+		Double cadastros = resultado.getDouble("total");
+
+		Double porpagina = 5.0;
+
+		Double pagina = cadastros / porpagina;
+
+		Double resto = pagina % 2;
+
+		if (resto > 0) {
+			pagina++;
+		}
+
+		return pagina.intValue();
 	}
 
 }

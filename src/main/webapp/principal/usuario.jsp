@@ -293,6 +293,13 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 						</tbody>
 					</table>
 				</div>
+				
+				<nav aria-label="Page navigation example">
+					<ul class="pagination" id="ulPaginacaoUserAjax">
+						
+					</ul>
+				</nav>
+				
 				<span id="totalResultados" style="padding: 10px 0px 5px 5px"></span>
 				<div class="modal-footer">
 
@@ -370,10 +377,11 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 									url : urlAction,
 									data : "nomeBusca=" + nomeBusca
 											+ "&acao=buscarajax",
-									success : function(response) {
+									success : function(response, textStatus, xhr) {
 										var json = JSON.parse(response);
-										$('#tabelaResultados > tbody > tr')
-												.remove();
+										$('#tabelaResultados > tbody > tr') .remove();
+										$("#ulPaginacaoUserAjax > li").remove();
+										
 										for (var i = 0; i < json.length; i++) {
 											$('#tabelaResultados > tbody')
 													.append(
@@ -388,6 +396,15 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 										document
 												.getElementById('totalResultados').textContent = 'Resultados: '
 												+ json.length;
+										
+										var totalPagina = new Number(xhr.getResponseHeader("totalPagina"));
+
+										for (var i = 0; i < totalPagina; i++){
+											
+											var url = urlAction + "?nomeBusca=" + nomeBusca + "&acao=buscarUserAjaxPage&pagina=" + (i * 5);
+											$("#ulPaginacaoUserAjax").append('<li class="page-item"><a class="page-link" onclick=buscarUserPageAjax('+url+')>' + (i + 1) +'</a></li>');
+											
+										}
 									}
 								}).fail(
 								function(xhr, status, errorThrown) {
@@ -395,6 +412,10 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 											+ xhr.responseText);
 								});
 			}
+		}
+		
+		function buscarUserPageAjax(url) {
+			
 		}
 
 		function excluirUsuarioComAjax() {
