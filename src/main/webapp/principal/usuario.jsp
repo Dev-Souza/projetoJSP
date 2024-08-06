@@ -86,13 +86,17 @@
 																	class="form-control-file"
 																	style="margin-top: 15px; margin-left: 5px;">
 															</div>
-
 															<div class="form-group form-default form-static-label">
 																<input type="text" name="nome" id="nome"
 																	class="form-control" required="required"
 																	value="${modelLogin.nome}"> <span
 																	class="form-bar"></span> <label class="float-label">Nome:</label>
 															</div>
+															<div class="form-group form-default form-static-label">
+                                                                <input type="text" name="datanascimento" id="datanascimento" class="form-control" required="required" value="${modelLogin.datanascimento}">
+                                                                <span class="form-bar"></span>
+                                                                <label class="float-label">Data Nascimento:</label>
+                                                            </div>                                                 
 															<div class="form-group form-default form-static-label">
 																<input type="email" name="email" id="email"
 																	class="form-control" required="required"
@@ -202,6 +206,9 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 															<button type="button"
 																class="btn btn-info waves-effect waves-light"
 																onclick="excluirUsuario();">Excluir</button>
+															<c:if test="${modelLogin.id > 0}">
+																<a href="<%= request.getContextPath()%>/ServletTelefonee?idUser=${modelLogin.id}" class="btn btn-primary waves-effect waves-light">Telefone</a>
+															</c:if>
 															<button type="button" class="btn btn-secundary"
 																data-toggle="modal" data-target="#exampleModalUsuario">
 																Pesquisar</button>
@@ -236,14 +243,14 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 										<nav aria-label="Page navigation example">
 											<ul class="pagination">
 												<%
-													int totalPagina = (int) request.getAttribute("totalPagina");
-												
-													for (int i = 0; i < totalPagina; i++){
-														String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5);
-														out.print("<li class=\"page-item\"><a class=\"page-link\" href=\""+ url +"\">"+(i + 1)+"</a></li>");
-													}
+												int totalPagina = (int) request.getAttribute("totalPagina");
+
+												for (int i = 0; i < totalPagina; i++) {
+													String url = request.getContextPath() + "/ServletUsuarioController?acao=paginar&pagina=" + (i * 5);
+													out.print("<li class=\"page-item\"><a class=\"page-link\" href=\"" + url + "\">" + (i + 1) + "</a></li>");
+												}
 												%>
-												
+
 											</ul>
 										</nav>
 									</div>
@@ -293,13 +300,13 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 						</tbody>
 					</table>
 				</div>
-				
+
 				<nav aria-label="Page navigation example">
 					<ul class="pagination" id="ulPaginacaoUserAjax">
-						
+
 					</ul>
 				</nav>
-				
+
 				<span id="totalResultados" style="padding: 10px 0px 5px 5px"></span>
 				<div class="modal-footer">
 
@@ -312,6 +319,24 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 	<!-- Arquivo aonde estão os links do js -->
 	<jsp:include page="javaScriptFile.jsp"></jsp:include>
 	<script type="text/javascript">
+	
+		$( function() {
+			  $("#datanascimento").datepicker({
+				    dateFormat: 'dd/mm/yy',
+				    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+				    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+				    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+				    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+				    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+				    nextText: 'Próximo',
+				    prevText: 'Anterior'
+				});
+		} );
+	
+		$("#numero, #cep").keypress(function (event) {
+			return /\d/.test(String.fromCharCode(event.keyCode));
+		});
+		
 		function pesquisarCep() {
 			var cep = $("#cep").val();
 
@@ -368,7 +393,7 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 
 		function buscarUsuarioComAjax() {
 			var nomeBusca = document.getElementById('nomeBusca').value;
-			if (nomeBusca && nomeBusca.trim() !== '') {
+			if (nomeBusca != null && nomeBusca != ''  && nomeBusca.trim() != '') {
 				var urlAction = document.getElementById('formUser').action;
 				$
 						.ajax(
@@ -377,11 +402,13 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 									url : urlAction,
 									data : "nomeBusca=" + nomeBusca
 											+ "&acao=buscarajax",
-									success : function(response, textStatus, xhr) {
+									success : function(response, textStatus,
+											xhr) {
 										var json = JSON.parse(response);
-										$('#tabelaResultados > tbody > tr') .remove();
+										$('#tabelaResultados > tbody > tr')
+												.remove();
 										$("#ulPaginacaoUserAjax > li").remove();
-										
+
 										for (var i = 0; i < json.length; i++) {
 											$('#tabelaResultados > tbody')
 													.append(
@@ -396,14 +423,15 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 										document
 												.getElementById('totalResultados').textContent = 'Resultados: '
 												+ json.length;
-										
-										var totalPagina = new Number(xhr.getResponseHeader("totalPagina"));
 
-										for (var i = 0; i < totalPagina; i++){
-											
-											var url = urlAction + "?nomeBusca=" + nomeBusca + "&acao=buscarUserAjaxPage&pagina=" + (i * 5);
-											$("#ulPaginacaoUserAjax").append('<li class="page-item"><a class="page-link" onclick=buscarUserPageAjax('+url+')>' + (i + 1) +'</a></li>');
-											
+										var totalPagina = xhr.getResponseHeader("totalPagina");
+
+										for (var i = 0; i < totalPagina; i++) {
+
+											var url = 'nomeBusca=' + nomeBusca + '&acao=buscarUserAjaxPage&pagina=' + (i * 5);
+											$("#ulPaginacaoUserAjax").append(
+													'<li class="page-item"><a class="page-link" href="#" onclick="buscarUserPageAjax(\'' + url + '\')">' + (i + 1)
+															+ '</a></li>');
 										}
 									}
 								}).fail(
@@ -413,9 +441,40 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 								});
 			}
 		}
-		
+
 		function buscarUserPageAjax(url) {
-			
+			var urlAction = document.getElementById('formUser').action;
+			var nomeBusca = document.getElementById('nomeBusca').value;
+			$.ajax({
+				method : "get",
+				url : urlAction,
+				data : url,
+				success : function(response, textStatus, xhr) {
+				var json = JSON.parse(response);
+				
+				$('#tabelaResultados > tbody > tr').remove();
+				$("#ulPaginacaoUserAjax > li").remove();
+
+				for (var i = 0; i < json.length; i++) {
+					$('#tabelaResultados > tbody').append('<tr><td>' + json[i].id + '</td><td>' + json[i].nome + '</td><td><button type="button" class="btn btn-info" onclick="visualizarEditar(' + json[i].id + ')">Visualizar</button></td></tr>');
+									}
+									document.getElementById('totalResultados').textContent = 'Resultados: '
+											+ json.length;
+
+									var totalPagina = xhr.getResponseHeader("totalPagina");
+
+									for (var i = 0; i < totalPagina; i++) {
+										var url = 'nomeBusca=' + nomeBusca + '&acao=buscarUserAjaxPage&pagina=' + (i * 5);
+										$("#ulPaginacaoUserAjax").append(
+												'<li class="page-item"><a class="page-link" href="#" onclick="buscarUserPageAjax(\'' + url + '\')">' + (i + 1)
+														+ '</a></li>');
+									}
+								}
+							}).fail(
+							function(xhr, status, errorThrown) {
+								alert('Erro ao buscar usuário por nome!'
+										+ xhr.responseText);
+							});
 		}
 
 		function excluirUsuarioComAjax() {

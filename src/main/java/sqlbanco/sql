@@ -58,3 +58,28 @@ ALTER TABLE IF EXISTS public.model_login
     
 ALTER TABLE IF EXISTS public.model_login
     ADD COLUMN numero character varying(250) COLLATE pg_catalog."default";
+    
+//Alterações para depois do dia 06/08/2024
+
+CREATE SEQUENCE public.telefone_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.telefone_seq
+    OWNER TO postgres;
+
+CREATE TABLE telefone (
+	id integer not null default nextval('telefone_seq'::regclass),
+	numero character varying(50) not null,
+	usuario_pai_id bigint not null,
+	usuario_cad_id bigint not null,
+	
+	CONSTRAINT telefone_pkey primary key (id),
+	CONSTRAINT usuario_pai_fk FOREIGN KEY (usuario_pai_id) REFERENCES model_login (id),
+	CONSTRAINT usuario_cad_fk FOREIGN KEY (usuario_cad_id) REFERENCES model_login (id)
+);
+
+ALTER TABLE model_login ADD COLUMN dataNascimento date;

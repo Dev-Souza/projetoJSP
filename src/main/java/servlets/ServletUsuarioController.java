@@ -1,6 +1,8 @@
 package servlets;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -64,6 +66,20 @@ public class ServletUsuarioController extends ServletGenericUtil{
 				String nomeBuscado = request.getParameter("nomeBusca");
 				
 				List<ModelLogin> dadosJsonUser = daoUsuarioRepository.buscarUsuarioAjax(nomeBuscado, super.getUserLogado(request));
+				
+				//Dependencia Jackson para transformar em json o meu objeto
+				ObjectMapper mapper = new ObjectMapper();
+				String json = mapper.writeValueAsString(dadosJsonUser);
+				
+				response.addHeader("totalPagina", "" +daoUsuarioRepository.consultaUsuarioLisTotalPaginaPaginacao(nomeBuscado, super.getUserLogado(request)));
+				response.getWriter().write(json);
+				
+			}else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("buscarUserAjaxPage")) {
+			
+				String nomeBuscado = request.getParameter("nomeBusca");
+				String pagina = request.getParameter("pagina");
+				
+				List<ModelLogin> dadosJsonUser = daoUsuarioRepository.buscarUsuarioAjaxOffSet(nomeBuscado, super.getUserLogado(request), Integer.parseInt(pagina));
 				
 				//Dependencia Jackson para transformar em json o meu objeto
 				ObjectMapper mapper = new ObjectMapper();
@@ -136,33 +152,36 @@ public class ServletUsuarioController extends ServletGenericUtil{
 	        String msg = "Operação realizada com sucesso!";
 
 	        String id = request.getParameter("id");
-	        String nome = request.getParameter("nome");
-	        String email = request.getParameter("email");
-	        String login = request.getParameter("login");
-	        String senha = request.getParameter("senha");
-	        String perfil = request.getParameter("perfil");
-	        String sexo = request.getParameter("sexo");
-	        String cep = request.getParameter("cep");
-	        String logradouro = request.getParameter("logradouro");
-	        String bairro = request.getParameter("bairro");
-	        String localidade = request.getParameter("localidade");
-	        String uf = request.getParameter("uf");
-	        String numero = request.getParameter("numero");
-	        
-	        ModelLogin modelLogin = new ModelLogin();
-	        modelLogin.setId(id != null && !id.isEmpty() ? Long.parseLong(id) : null);
-	        modelLogin.setNome(nome);
-	        modelLogin.setEmail(email);
-	        modelLogin.setLogin(login);
-	        modelLogin.setSenha(senha);
-	        modelLogin.setPerfil(perfil);
-	        modelLogin.setSexo(sexo);
-	        modelLogin.setCep(cep);
-	        modelLogin.setLogradouro(logradouro);
-	        modelLogin.setBairro(bairro);
-	        modelLogin.setLocalidade(localidade);
-	        modelLogin.setUf(uf);
-	        modelLogin.setNumero(numero);
+			String nome = request.getParameter("nome");
+			String email = request.getParameter("email");
+			String login = request.getParameter("login");
+			String senha = request.getParameter("senha");
+			String perfil = request.getParameter("perfil");
+			String sexo = request.getParameter("sexo");
+			String cep = request.getParameter("cep");
+			String logradouro = request.getParameter("logradouro");
+			String bairro = request.getParameter("bairro");
+			String localidade = request.getParameter("localidade");
+			String uf = request.getParameter("uf");
+			String numero = request.getParameter("numero");
+			String datanascimento = request.getParameter("datanascimento");
+			
+			ModelLogin modelLogin = new ModelLogin();
+			
+			modelLogin.setId(id != null && !id.isEmpty() ? Long.parseLong(id) : null);
+			modelLogin.setNome(nome);
+			modelLogin.setEmail(email);
+			modelLogin.setLogin(login);
+			modelLogin.setSenha(senha);
+			modelLogin.setPerfil(perfil);
+			modelLogin.setSexo(sexo);
+			modelLogin.setCep(cep);
+			modelLogin.setLogradouro(logradouro);
+			modelLogin.setBairro(bairro);
+			modelLogin.setLocalidade(localidade);
+			modelLogin.setUf(uf);
+			modelLogin.setNumero(numero);
+			modelLogin.setDatanascimento(new Date(new SimpleDateFormat("dd/mm/yyyy").parse(datanascimento).getTime()));
 
 	        // Verifica se a solicitação é multipart
 	        Part part = request.getPart("fileFoto"); // Pega a foto do formulário

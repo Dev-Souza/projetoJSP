@@ -19,68 +19,75 @@ public class DAOUsuarioRepository {
 
 	public ModelLogin gravarUsuario(ModelLogin objeto, Long userLogado) throws Exception {
 
-		if (objeto.isNovo()) {// Grava um novo
+		if (objeto.isNovo()) {/* Grava um novo */
 
-			String sql = "INSERT INTO model_login(login, senha, nome, email, usuario_id, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-			PreparedStatement insertUsuario = connection.prepareStatement(sql);
+			String sql = "INSERT INTO model_login(login, senha, nome, email, usuario_id, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero, datanascimento)  VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?,?,?,?,?);";
+			PreparedStatement preparedSql = connection.prepareStatement(sql);
 
-			insertUsuario.setString(1, objeto.getLogin());
-			insertUsuario.setString(2, objeto.getSenha());
-			insertUsuario.setString(3, objeto.getNome());
-			insertUsuario.setString(4, objeto.getEmail());
-			insertUsuario.setLong(5, userLogado);
-			insertUsuario.setString(6, objeto.getPerfil());
-			insertUsuario.setString(7, objeto.getSexo());
-			insertUsuario.setString(8, objeto.getCep());
-			insertUsuario.setString(9, objeto.getLogradouro());
-			insertUsuario.setString(10, objeto.getBairro());
-			insertUsuario.setString(11, objeto.getLocalidade());
-			insertUsuario.setString(12, objeto.getUf());
-			insertUsuario.setString(13, objeto.getNumero());
-			insertUsuario.execute();// Executa a instrução SQL
+			preparedSql.setString(1, objeto.getLogin());
+			preparedSql.setString(2, objeto.getSenha());
+			preparedSql.setString(3, objeto.getNome());
+			preparedSql.setString(4, objeto.getEmail());
+			preparedSql.setLong(5, userLogado);
+			preparedSql.setString(6, objeto.getPerfil());
+			preparedSql.setString(7, objeto.getSexo());
+
+			preparedSql.setString(8, objeto.getCep());
+			preparedSql.setString(9, objeto.getLogradouro());
+			preparedSql.setString(10, objeto.getBairro());
+			preparedSql.setString(11, objeto.getLocalidade());
+			preparedSql.setString(12, objeto.getUf());
+			preparedSql.setString(13, objeto.getNumero());
+			preparedSql.setDate(14, objeto.getDatanascimento());
+
+			preparedSql.execute();
 			connection.commit();
 
-			// Caso venha uma foto insira ela
 			if (objeto.getFotouser() != null && !objeto.getFotouser().isEmpty()) {
-				sql = "UPDATE model_login SET fotouser = ?, extensaofotouser = ? WHERE login = ?";
-				insertUsuario = connection.prepareStatement(sql);
-				insertUsuario.setString(1, objeto.getFotouser());
-				insertUsuario.setString(2, objeto.getExtensaofotouser());
-				insertUsuario.setString(3, objeto.getLogin());
-				insertUsuario.execute();// Executa a instrução SQL
+				sql = "update model_login set fotouser =?, extensaofotouser=? where login =?";
+
+				preparedSql = connection.prepareStatement(sql);
+				preparedSql.setString(1, objeto.getFotouser());
+				preparedSql.setString(2, objeto.getExtensaofotouser());
+				preparedSql.setString(3, objeto.getLogin());
+
+				preparedSql.execute();
 				connection.commit();
 			}
 		} else {
-			String sql = "UPDATE model_login SET login=?, senha=?, nome=?, email=?, perfil=?, sexo=?, cep=?, logradouro=?, bairro=?, localidade=?, uf=?, numero=? WHERE id = "
+			String sql = "UPDATE model_login SET login=?, senha=?, nome=?, email=?, perfil=?, sexo=?, cep=?, logradouro=?, bairro =?, localidade=?, uf=?, numero =?, datanascimento =? WHERE id =  "
 					+ objeto.getId() + ";";
 
-			PreparedStatement updateUsuario = connection.prepareStatement(sql);
+			PreparedStatement prepareSql = connection.prepareStatement(sql);
 
-			updateUsuario.setString(1, objeto.getLogin());
-			updateUsuario.setString(2, objeto.getSenha());
-			updateUsuario.setString(3, objeto.getNome());
-			updateUsuario.setString(4, objeto.getEmail());
-			updateUsuario.setString(5, objeto.getPerfil());
-			updateUsuario.setString(6, objeto.getSexo());
-			updateUsuario.setString(7, objeto.getCep());
-			updateUsuario.setString(8, objeto.getLogradouro());
-			updateUsuario.setString(9, objeto.getBairro());
-			updateUsuario.setString(10, objeto.getLocalidade());
-			updateUsuario.setString(11, objeto.getUf());
-			updateUsuario.setString(12, objeto.getNumero());
+			prepareSql.setString(1, objeto.getLogin());
+			prepareSql.setString(2, objeto.getSenha());
+			prepareSql.setString(3, objeto.getNome());
+			prepareSql.setString(4, objeto.getEmail());
+			prepareSql.setString(5, objeto.getPerfil());
+			prepareSql.setString(6, objeto.getSexo());
+			prepareSql.setString(7, objeto.getCep());
+			prepareSql.setString(8, objeto.getLogradouro());
+			prepareSql.setString(9, objeto.getBairro());
+			prepareSql.setString(10, objeto.getLocalidade());
+			prepareSql.setString(11, objeto.getUf());
+			prepareSql.setString(12, objeto.getNumero());
+			prepareSql.setDate(13, objeto.getDatanascimento());
 
-			updateUsuario.executeUpdate();
-
+			prepareSql.executeUpdate();
 			connection.commit();
 
-			// Caso venha uma foto no meu update insira ela
 			if (objeto.getFotouser() != null && !objeto.getFotouser().isEmpty()) {
-				sql = "UPDATE model_login SET fotouser = ?, extensaofotouser = ? WHERE id = ?";
-				updateUsuario = connection.prepareStatement(sql);
-				updateUsuario.setString(1, objeto.getFotouser());
-				updateUsuario.setString(2, objeto.getExtensaofotouser());
-				updateUsuario.setLong(3, objeto.getId());
-				updateUsuario.execute();// Executa a instrução SQL
+				sql = "update model_login set fotouser =?, extensaofotouser=? where id =?";
+
+				prepareSql = connection.prepareStatement(sql);
+
+				prepareSql.setString(1, objeto.getFotouser());
+				prepareSql.setString(2, objeto.getExtensaofotouser());
+				prepareSql.setLong(3, objeto.getId());
+
+				prepareSql.execute();
+
 				connection.commit();
 			}
 		}
@@ -212,6 +219,37 @@ public class DAOUsuarioRepository {
 		return modelLogin;
 	}
 
+	public ModelLogin buscarUsuarioPorId(Long id) throws Exception {
+
+		ModelLogin modelLogin = new ModelLogin();
+
+		String sql = "SELECT * FROM model_login WHERE id = ? AND useradmin is false";
+		PreparedStatement buscarUsuarioPorId = connection.prepareStatement(sql);
+		buscarUsuarioPorId.setLong(1, id);
+
+		ResultSet resultado = buscarUsuarioPorId.executeQuery();
+
+		while (resultado.next()) {// Enquanto tiver resultado
+			modelLogin.setId(resultado.getLong("id"));
+			modelLogin.setEmail(resultado.getString("email"));
+			modelLogin.setLogin(resultado.getString("login"));
+			modelLogin.setSenha(resultado.getString("senha"));
+			modelLogin.setNome(resultado.getString("nome"));
+			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			modelLogin.setFotouser(resultado.getString("fotouser"));
+			modelLogin.setExtensaofotouser(resultado.getString("extensaofotouser"));
+			modelLogin.setCep(resultado.getString("cep"));
+			modelLogin.setLogradouro(resultado.getString("logradouro"));
+			modelLogin.setBairro(resultado.getString("bairro"));
+			modelLogin.setLocalidade(resultado.getString("localidade"));
+			modelLogin.setUf(resultado.getString("uf"));
+			modelLogin.setNumero(resultado.getString("numero"));
+		}
+
+		return modelLogin;
+	}
+
 	public boolean validarLogin(String login) throws Exception {
 
 		String sql = "SELECT COUNT(1) > 0 AS existe FROM model_login WHERE upper(login) = upper(?)";
@@ -254,6 +292,7 @@ public class DAOUsuarioRepository {
 			// modelLogin.setSenha(resultado.getString("senha"));
 			modelLogin.setPerfil(resultado.getString("perfil"));
 			modelLogin.setSexo(resultado.getString("sexo"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
 
 			retorno.add(modelLogin);
 
@@ -344,10 +383,40 @@ public class DAOUsuarioRepository {
 		return retorno;
 	}
 
+	public List<ModelLogin> buscarUsuarioAjaxOffSet(String nome, Long userLogado, int offset) throws Exception {
+
+		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
+
+		String sql = "SELECT * FROM model_login WHERE upper(nome) LIKE upper(?) AND useradmin is false AND usuario_id = ? offset "
+				+ offset + " limit 5";
+		PreparedStatement busca = connection.prepareStatement(sql);
+		busca.setString(1, "%" + nome + "%");
+		busca.setLong(2, userLogado);
+
+		// Armazena minha busca nesse resultado
+		ResultSet resultado = busca.executeQuery();
+
+		while (resultado.next()) {// Percorre minhas linhas enquanto tem resultado detro delas
+
+			ModelLogin modelLogin = new ModelLogin();
+			modelLogin.setEmail(resultado.getString("email"));
+			modelLogin.setId(resultado.getLong("id"));
+			modelLogin.setLogin(resultado.getString("login"));
+			modelLogin.setNome(resultado.getString("nome"));
+			// modelLogin.setSenha(resultado.getString("senha"));
+			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+
+			retorno.add(modelLogin);
+
+		}
+		return retorno;
+	}
+
 	public int consultaUsuarioLisTotalPaginaPaginacao(String nome, Long userLogado) throws Exception {
 
 		String sql = "SELECT COUNT(1) as total FROM model_login WHERE upper(nome) LIKE upper(?) AND useradmin is false AND usuario_id = ?";
-		
+
 		PreparedStatement busca = connection.prepareStatement(sql);
 		busca.setString(1, "%" + nome + "%");
 		busca.setLong(2, userLogado);
