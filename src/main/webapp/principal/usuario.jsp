@@ -96,7 +96,13 @@
                                                                 <input type="text" name="datanascimento" id="datanascimento" class="form-control" required="required" value="${modelLogin.datanascimento}">
                                                                 <span class="form-bar"></span>
                                                                 <label class="float-label">Data Nascimento:</label>
-                                                            </div>                                                 
+                                                            </div> 
+                                                            <div class="form-group form-default form-static-label">
+																<input type="text" name="rendamensal" id="rendamensal"
+																	class="form-control" required="required"
+																	value="${modelLogin.rendamensal}"> <span
+																	class="form-bar"></span> <label class="float-label">Renda Mensal:</label>
+															</div>                                                
 															<div class="form-group form-default form-static-label">
 																<input type="email" name="email" id="email"
 																	class="form-control" required="required"
@@ -319,7 +325,25 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 	<!-- Arquivo aonde estão os links do js -->
 	<jsp:include page="javaScriptFile.jsp"></jsp:include>
 	<script type="text/javascript">
+		$("#rendamensal").maskMoney({showSymbol:true, symbol:"R$ ", decimal:",", thousands:"."});
 	
+		const formatter = new Intl.NumberFormat('pt-BR', {
+			currency : 'BRL',
+			minimumFractionDigits : 2
+		});
+		
+		$("#rendamensal").val(formatter.format($("#rendamensal").val()));
+		
+		$("#rendamensal").focus();
+		
+		var dataNascimento = $("#datanascimento").val();
+		
+		var dateFormat = new Date(dataNascimento);
+		
+		$("#datanascimento").val(dateFormat.toLocaleDateString('pt-BR', {timeZone: 'UTC'}));
+		
+		$("#nome").focus();
+		
 		$( function() {
 			  $("#datanascimento").datepicker({
 				    dateFormat: 'dd/mm/yy',

@@ -83,3 +83,4 @@ CREATE TABLE telefone (
 );
 
 ALTER TABLE model_login ADD COLUMN dataNascimento date;
+ALTER TABLE model_login ADD COLUMN rendamensal numeric(6,3);

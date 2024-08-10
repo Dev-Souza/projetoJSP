@@ -1,18 +1,21 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import connection.SingleConnectionBanco;
 import model.ModelLogin;
+import model.ModelTelefone;
 
 public class DAOUsuarioRepository {
 
 	private Connection connection;
-
+	
 	public DAOUsuarioRepository() {
 		connection = SingleConnectionBanco.getConnection();
 	}
@@ -21,7 +24,7 @@ public class DAOUsuarioRepository {
 
 		if (objeto.isNovo()) {/* Grava um novo */
 
-			String sql = "INSERT INTO model_login(login, senha, nome, email, usuario_id, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero, datanascimento)  VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?,?,?,?,?);";
+			String sql = "INSERT INTO model_login(login, senha, nome, email, usuario_id, perfil, sexo, cep, logradouro, bairro, localidade, uf, numero, datanascimento, rendamensal)  VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?,?,?,?,?,?);";
 			PreparedStatement preparedSql = connection.prepareStatement(sql);
 
 			preparedSql.setString(1, objeto.getLogin());
@@ -39,6 +42,7 @@ public class DAOUsuarioRepository {
 			preparedSql.setString(12, objeto.getUf());
 			preparedSql.setString(13, objeto.getNumero());
 			preparedSql.setDate(14, objeto.getDatanascimento());
+			preparedSql.setDouble(15, objeto.getRendamensal());
 
 			preparedSql.execute();
 			connection.commit();
@@ -55,7 +59,7 @@ public class DAOUsuarioRepository {
 				connection.commit();
 			}
 		} else {
-			String sql = "UPDATE model_login SET login=?, senha=?, nome=?, email=?, perfil=?, sexo=?, cep=?, logradouro=?, bairro =?, localidade=?, uf=?, numero =?, datanascimento =? WHERE id =  "
+			String sql = "UPDATE model_login SET login=?, senha=?, nome=?, email=?, perfil=?, sexo=?, cep=?, logradouro=?, bairro =?, localidade=?, uf=?, numero =?, datanascimento =?, rendamensal=? WHERE id =  "
 					+ objeto.getId() + ";";
 
 			PreparedStatement prepareSql = connection.prepareStatement(sql);
@@ -73,6 +77,7 @@ public class DAOUsuarioRepository {
 			prepareSql.setString(11, objeto.getUf());
 			prepareSql.setString(12, objeto.getNumero());
 			prepareSql.setDate(13, objeto.getDatanascimento());
+			prepareSql.setDouble(14, objeto.getRendamensal());
 
 			prepareSql.executeUpdate();
 			connection.commit();
@@ -120,6 +125,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setLocalidade(resultado.getString("localidade"));
 			modelLogin.setUf(resultado.getString("uf"));
 			modelLogin.setNumero(resultado.getString("numero"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 		}
 
 		return modelLogin;
@@ -151,6 +158,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setLocalidade(resultado.getString("localidade"));
 			modelLogin.setUf(resultado.getString("uf"));
 			modelLogin.setNumero(resultado.getString("numero"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 		}
 
 		return modelLogin;
@@ -181,6 +190,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setLocalidade(resultado.getString("localidade"));
 			modelLogin.setUf(resultado.getString("uf"));
 			modelLogin.setNumero(resultado.getString("numero"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 
 		}
 
@@ -214,6 +225,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setLocalidade(resultado.getString("localidade"));
 			modelLogin.setUf(resultado.getString("uf"));
 			modelLogin.setNumero(resultado.getString("numero"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 		}
 
 		return modelLogin;
@@ -245,6 +258,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setLocalidade(resultado.getString("localidade"));
 			modelLogin.setUf(resultado.getString("uf"));
 			modelLogin.setNumero(resultado.getString("numero"));
+			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 		}
 
 		return modelLogin;
@@ -272,6 +287,86 @@ public class DAOUsuarioRepository {
 		connection.commit();
 	}
 
+	public List<ModelLogin> buscarUsuarioAjaxRel(Long userLogado) throws Exception {
+
+		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
+
+		String sql = "SELECT * FROM model_login WHERE useradmin is false AND usuario_id = " + userLogado;
+		PreparedStatement busca = connection.prepareStatement(sql);
+
+		// Armazena minha busca nesse resultado
+		ResultSet resultado = busca.executeQuery();
+
+		while (resultado.next()) {// Percorre minhas linhas enquanto tem resultado detro delas
+
+			ModelLogin modelLogin = new ModelLogin();
+			modelLogin.setEmail(resultado.getString("email"));
+			modelLogin.setId(resultado.getLong("id"));
+			modelLogin.setLogin(resultado.getString("login"));
+			modelLogin.setNome(resultado.getString("nome"));
+			// modelLogin.setSenha(resultado.getString("senha"));
+			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			modelLogin.setTelefones(this.listarTelefones(modelLogin.getId()));
+			
+			retorno.add(modelLogin);
+		}
+		return retorno;
+	}
+	
+	public List<ModelLogin> buscarUsuarioAjaxRel(Long userLogado, String dataInicial, String dataFinal) throws Exception {
+
+		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
+
+		String sql = "SELECT * FROM model_login WHERE useradmin is false AND usuario_id = " + userLogado + " AND datanascimento >= ? AND datanascimento <=?";
+		PreparedStatement busca = connection.prepareStatement(sql);
+		busca.setDate(1, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataInicial))));
+		busca.setDate(2, Date.valueOf(new SimpleDateFormat("yyyy-mm-dd").format(new SimpleDateFormat("dd/mm/yyyy").parse(dataFinal))));
+
+		// Armazena minha busca nesse resultado
+		ResultSet resultado = busca.executeQuery();
+
+		while (resultado.next()) {// Percorre minhas linhas enquanto tem resultado detro delas
+
+			ModelLogin modelLogin = new ModelLogin();
+			modelLogin.setEmail(resultado.getString("email"));
+			modelLogin.setId(resultado.getLong("id"));
+			modelLogin.setLogin(resultado.getString("login"));
+			modelLogin.setNome(resultado.getString("nome"));
+			// modelLogin.setSenha(resultado.getString("senha"));
+			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			modelLogin.setTelefones(this.listarTelefones(modelLogin.getId()));
+			
+			retorno.add(modelLogin);
+		}
+		return retorno;
+	}
+	
+	public List<ModelTelefone> listarTelefones(Long idUserPai) throws Exception{
+		
+		List<ModelTelefone> retorno = new ArrayList<ModelTelefone>();
+		
+		String sql = "SELECT * FROM telefone WHERE usuario_pai_id = ?";
+		
+		PreparedStatement listar = connection.prepareStatement(sql);
+		listar.setLong(1, idUserPai);
+	
+		ResultSet resultado = listar.executeQuery();
+		
+		while (resultado.next()) {
+			ModelTelefone modelTelefone = new ModelTelefone();
+			modelTelefone.setId(resultado.getLong("id"));
+			modelTelefone.setNumero(resultado.getString("numero"));
+			modelTelefone.setUsuario_cad_id(this.buscarUsuarioPorId(resultado.getLong("usuario_cad_id")));
+			modelTelefone.setUsuario_pai_id(this.buscarUsuarioPorId(resultado.getLong("usuario_pai_id")));
+			
+			retorno.add(modelTelefone);
+		}
+		
+		return retorno;
+	}
+	
 	public List<ModelLogin> buscarUsuarioAjax(Long userLogado) throws Exception {
 
 		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
@@ -293,6 +388,7 @@ public class DAOUsuarioRepository {
 			modelLogin.setPerfil(resultado.getString("perfil"));
 			modelLogin.setSexo(resultado.getString("sexo"));
 			modelLogin.setDatanascimento(resultado.getDate("datanascimento"));
+			modelLogin.setRendamensal(resultado.getDouble("rendamensal"));
 
 			retorno.add(modelLogin);
 
