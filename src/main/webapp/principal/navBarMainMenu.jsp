@@ -4,7 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <c:set scope="session" var="perfil"
-	value='<%=request.getSession().getAttribute("perfil").toString()%>'></c:set>
+	value='<%= request.getSession().getAttribute("perfil") %>'></c:set>
 <nav class="pcoded-navbar">
 	<div class="sidebar_toggle">
 		<a href="#"><i class="icon-close icons"></i></a>
@@ -14,10 +14,13 @@
 		<div class="">
 			<div class="main-menu-header">
 				<c:if test="${imagemUser != '' && imagemUser != null}">
-					<img class="img-80 img-radius" src="${imagemUser}" alt="User-Profile-Image">
+					<img class="img-80 img-radius" src="${imagemUser}"
+						alt="User-Profile-Image">
 				</c:if>
 				<c:if test="${imagemUser == '' || imagemUser == null}">
-					<img class="img-80 img-radius" src="./assets/images/imagensMinha/usuarioSemFoto.jpg" alt="User-Profile-Image">
+					<img class="img-80 img-radius"
+						src="./assets/images/imagensMinha/usuarioSemFoto.jpg"
+						alt="User-Profile-Image">
 				</c:if>
 				<div class="user-details">
 					<span id="more-details"> <%=request.getSession().getAttribute("usuario")%><i
@@ -129,19 +132,21 @@
 		</ul>
 		<div class="pcoded-navigation-label" data-i18n="nav.category.forms">Relatório</div>
 		<ul class="pcoded-item pcoded-left-item">
-			<li><a href="<%=request.getContextPath()%>/principal/reluser.jsp"
+			<li><a
+				href="<%=request.getContextPath()%>/principal/reluser.jsp"
 				class="waves-effect waves-dark"> <span class="pcoded-micon"><i
 						class="ti-layers"></i><b>FC</b></span> <span class="pcoded-mtext"
 					data-i18n="nav.form-components.main">Usuário</span> <span
 					class="pcoded-mcaret"></span>
 			</a></li>
-			<!-- 
-					<li><a href="bs-basic-table.html" class="waves-effect waves-dark"> <span class="pcoded-micon"><i
-									class="ti-layers"></i><b>FC</b></span> <span class="pcoded-mtext"
-								data-i18n="nav.form-components.main">Basic Table</span> <span
-								class="pcoded-mcaret"></span>
-						</a></li>
-					 -->
+
+			<li><a href="<%= request.getContextPath()%>/principal/reluserGrafico.jsp"
+				class="waves-effect waves-dark"> <span class="pcoded-micon"><i
+						class="ti-layers"></i><b>FC</b></span> <span class="pcoded-mtext"
+					data-i18n="nav.form-components.main">Gráfico Salário</span> <span
+					class="pcoded-mcaret"></span>
+			</a></li>
+
 		</ul>
 		<!-- 
 				<div class="pcoded-navigation-label" data-i18n="nav.category.forms">Chart

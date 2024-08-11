@@ -338,9 +338,10 @@ if (modelLogin != null && modelLogin.getSexo().equals("FEMININO")) {
 		
 		var dataNascimento = $("#datanascimento").val();
 		
-		var dateFormat = new Date(dataNascimento);
-		
-		$("#datanascimento").val(dateFormat.toLocaleDateString('pt-BR', {timeZone: 'UTC'}));
+		if(dataNascimento != null && dataNascimento != '') {
+			var dateFormat = new Date(dataNascimento);
+			$("#datanascimento").val(dateFormat.toLocaleDateString('pt-BR', {timeZone: 'UTC'}));			
+		}
 		
 		$("#nome").focus();
 		
