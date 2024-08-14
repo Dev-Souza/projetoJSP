@@ -1,0 +1,1 @@
+ALTER TABLE model_login ADD COLUMN cpf CHARACTER varying(200);

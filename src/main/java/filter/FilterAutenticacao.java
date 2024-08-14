@@ -1,10 +1,16 @@
 package filter;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.oracle.wls.shaded.java_cup.runtime.Scanner;
+import com.oracle.wls.shaded.java_cup.runtime.Symbol;
+
 import connection.SingleConnectionBanco;
+import dao.DaoVersionadorBanco;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -61,8 +67,8 @@ public class FilterAutenticacao implements Filter {
 			} else {
 				chain.doFilter(request, response);
 			}
-			
-			connection.commit(); //Deu tudo ceto, então comita as alterações no banco de dados
+
+			connection.commit(); // Deu tudo ceto, então comita as alterações no banco de dados
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -83,6 +89,46 @@ public class FilterAutenticacao implements Filter {
 	// inicar a conexão com o banco
 	public void init(FilterConfig fConfig) throws ServletException {
 		connection = SingleConnectionBanco.getConnection();
+
+		DaoVersionadorBanco banco = new DaoVersionadorBanco();
+
+		String caminhoPastaSQL = fConfig.getServletContext().getRealPath("versionadorbancosql") + File.separator;
+
+		File[] filesSql = new File(caminhoPastaSQL).listFiles();
+
+		try {
+			for (File file : filesSql) {
+				boolean arquivoJaRodado = banco.arquivoSqlRodado(file.getName());
+				
+				if(!arquivoJaRodado) {
+					
+					FileInputStream entradaArquivo = new FileInputStream(file);
+					
+					java.util.Scanner lerArquivo = new java.util.Scanner(entradaArquivo, "UTF-8");
+					
+					StringBuilder sql = new StringBuilder();
+					
+					while(lerArquivo.hasNext()) {
+						
+						sql.append(lerArquivo.nextLine());
+						sql.append("\n");
+					}
+					
+					connection.prepareStatement(sql.toString()).execute();
+					banco.gravaArquivoSqlRodado(file.getName());
+					connection.commit();
+					lerArquivo.close();
+				}
+			}
+			
+		} catch (Exception e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+		}
 	}
 
 }
